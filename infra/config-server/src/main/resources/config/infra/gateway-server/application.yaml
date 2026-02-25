@@ -12,7 +12,7 @@ spring:
             - Path=/admin/**,/users/**,/events/**,/categories/**,/compilations/**,/requests/**,/comments/**,/top/**
 
         - id: stats-service
-          uri: lb://stats-service
+          uri: lb://stats-server
           predicates:
             - Path=/hit/**,/stats/**
 
