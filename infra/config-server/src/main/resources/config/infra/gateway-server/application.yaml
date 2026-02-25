@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+
+        - id: main-service
+          uri: lb://main-service
+          predicates:
+            - Path=/admin/**,/users/**,/events/**,/categories/**,/compilations/**,/requests/**,/comments/**,/top/**
+
+        - id: stats-service
+          uri: lb://stats-service
+          predicates:
+            - Path=/hit/**,/stats/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway.route: INFO
