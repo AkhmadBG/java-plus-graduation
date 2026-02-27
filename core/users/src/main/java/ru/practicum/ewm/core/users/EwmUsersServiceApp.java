@@ -1,13 +1,13 @@
-package ru.practicum.ewm.core.events;
+package ru.practicum.ewm.core.users;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EventsApp {
+public class EwmUsersServiceApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(EventsApp.class, args);
+        SpringApplication.run(EwmUsersServiceApp.class, args);
     }
 
 }
