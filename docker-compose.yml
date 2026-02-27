@@ -13,6 +13,58 @@ services:
       - ewm_main_data:/var/lib/postgresql/data
     restart: on-failure
 
+  categories-db:
+    image: postgres:16.1
+    container_name: ewm-core-categories-db-container
+    ports:
+      - "5426:5432"
+    environment:
+      - POSTGRES_DB=ewm-core-categories
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    volumes:
+      - ewm_core_categories_data:/var/lib/postgresql/data
+    restart: on-failure
+
+  events-db:
+    image: postgres:16.1
+    container_name: ewm-core-events-db-container
+    ports:
+      - "5427:5432"
+    environment:
+      - POSTGRES_DB=ewm-core-events
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    volumes:
+      - ewm_core_events_data:/var/lib/postgresql/data
+    restart: on-failure
+
+  requests-db:
+    image: postgres:16.1
+    container_name: ewm-core-requests-db-container
+    ports:
+      - "5428:5432"
+    environment:
+      - POSTGRES_DB=ewm-core-requests
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    volumes:
+      - ewm_core_requests_data:/var/lib/postgresql/data
+    restart: on-failure
+
+  users-db:
+    image: postgres:16.1
+    container_name: ewm-core-users-db-container
+    ports:
+      - "5429:5432"
+    environment:
+      - POSTGRES_DB=ewm-core-users
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    volumes:
+      - ewm_core_users_data:/var/lib/postgresql/data
+    restart: on-failure
+
   stats-db:
     image: postgres:16.1
     container_name: ewm-stats-service-db-container
@@ -29,3 +81,7 @@ services:
 volumes:
   ewm_stats_data:
   ewm_main_data:
+  ewm_core_categories_data:
+  ewm_core_events_data:
+  ewm_core_requests_data:
+  ewm_core_users_data:
