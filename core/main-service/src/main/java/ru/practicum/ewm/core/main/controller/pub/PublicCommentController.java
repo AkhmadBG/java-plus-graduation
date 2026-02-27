@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewm.core.main.dto.comment.CommentDto;
-import ru.practicum.ewm.core.main.dto.event.EventFullDto;
+import ru.practicum.ewm.core.interaction.dto.comment.CommentDto;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.main.service.comment.CommentService;
 import ru.practicum.ewm.core.main.service.event.EventService;
 

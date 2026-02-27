@@ -2,7 +2,7 @@ package ru.practicum.ewm.core.main.controller.pub;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.core.main.dto.category.CategoryDto;
+import ru.practicum.ewm.core.interaction.dto.category.CategoryDto;
 import ru.practicum.ewm.core.main.service.category.CategoryService;
 
 import java.util.List;

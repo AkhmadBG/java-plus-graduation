@@ -1,18 +1,20 @@
 package ru.practicum.ewm.core.main.mapper;
 
-import org.mapstruct.*;
-import ru.practicum.ewm.core.main.dto.event.LocationDto;
-import ru.practicum.ewm.core.main.dto.event.EventFullDto;
-import ru.practicum.ewm.core.main.dto.event.EventShortDto;
-import ru.practicum.ewm.core.main.dto.event.NewEventDto;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
+import ru.practicum.ewm.core.interaction.dto.event.EventShortDto;
+import ru.practicum.ewm.core.interaction.dto.event.LocationDto;
+import ru.practicum.ewm.core.interaction.dto.event.NewEventDto;
 import ru.practicum.ewm.core.main.entity.Category;
 import ru.practicum.ewm.core.main.entity.Event;
 import ru.practicum.ewm.core.main.entity.User;
-import ru.practicum.ewm.core.main.enums.EventState;
+import ru.practicum.ewm.core.interaction.enums.EventState;
+import ru.practicum.ewm.core.interaction.util.DateFormatter;
 
 import java.time.LocalDateTime;
-
-import ru.practicum.ewm.core.main.util.DateFormatter;
 
 @Mapper(componentModel = "spring",
         uses = {CategoryMapper.class, UserMapper.class, LocationMapper.class},

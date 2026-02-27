@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.core.main.dto.event.EventFullDto;
-import ru.practicum.ewm.core.main.dto.event.PublicEventSearchRequest;
-import ru.practicum.ewm.core.main.enums.SortValue;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
+import ru.practicum.ewm.core.interaction.dto.event.PublicEventSearchRequest;
+import ru.practicum.ewm.core.interaction.enums.SortValue;
 import ru.practicum.ewm.core.main.service.event.EventService;
 
 import java.util.List;

@@ -19,6 +19,7 @@
         <module>events</module>
         <module>requests</module>
         <module>users</module>
+        <module>interaction</module>
     </modules>
 
 </project>

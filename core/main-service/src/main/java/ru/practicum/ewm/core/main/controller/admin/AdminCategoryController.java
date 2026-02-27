@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.core.main.dto.category.CategoryDto;
-import ru.practicum.ewm.core.main.dto.category.NewCategoryDto;
-import ru.practicum.ewm.core.main.dto.category.UpdateCategoryDto;
+import ru.practicum.ewm.core.interaction.dto.category.CategoryDto;
+import ru.practicum.ewm.core.interaction.dto.category.NewCategoryDto;
+import ru.practicum.ewm.core.interaction.dto.category.UpdateCategoryDto;
 import ru.practicum.ewm.core.main.service.category.CategoryService;
 
 @RestController

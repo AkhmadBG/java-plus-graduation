@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.ewm.core.main.enums.RequestStatus;
+import ru.practicum.ewm.core.interaction.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "participation_requests")
 public class ParticipationRequest {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,4 +33,5 @@ public class ParticipationRequest {
     private RequestStatus status;
 
     private LocalDateTime created;
+
 }

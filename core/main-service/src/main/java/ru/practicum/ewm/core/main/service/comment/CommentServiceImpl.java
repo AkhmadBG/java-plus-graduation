@@ -7,13 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.core.main.dto.comment.CommentDto;
-import ru.practicum.ewm.core.main.dto.comment.CreateCommentDto;
+import ru.practicum.ewm.core.interaction.dto.comment.CommentDto;
+import ru.practicum.ewm.core.interaction.dto.comment.CreateCommentDto;
+import ru.practicum.ewm.core.interaction.exceptions.CommentNotExistException;
+import ru.practicum.ewm.core.interaction.exceptions.NotFoundException;
 import ru.practicum.ewm.core.main.entity.Comment;
 import ru.practicum.ewm.core.main.entity.Event;
 import ru.practicum.ewm.core.main.entity.User;
-import ru.practicum.ewm.core.main.exception.CommentNotExistException;
-import ru.practicum.ewm.core.main.exception.NotFoundException;
+import ru.practicum.ewm.core.interaction.feignclient.adm.AdminUserFeignClient;
 import ru.practicum.ewm.core.main.mapper.CommentMapper;
 import ru.practicum.ewm.core.main.repository.CommentRepository;
 import ru.practicum.ewm.core.main.repository.EventRepository;
@@ -28,6 +29,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final AdminUserFeignClient adminUserFeignClient;
     private final CommentMapper commentMapper;
 
     @Override
@@ -49,6 +51,8 @@ public class CommentServiceImpl implements CommentService {
                         "Does not exist Event with Id " + eventId));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CommentNotExistException("Not possible create Comment - " + "Does not exist User with Id " + userId));
+
+//        adminUserFeignClient.
 
         Comment commentFromDto = commentMapper.toComment(createCommentDto);
 

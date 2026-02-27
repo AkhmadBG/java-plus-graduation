@@ -4,10 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.core.main.dto.event.AdminEventSearchRequest;
-import ru.practicum.ewm.core.main.dto.event.EventFullDto;
-import ru.practicum.ewm.core.main.dto.event.UpdateEventAdminDto;
-import ru.practicum.ewm.core.main.enums.EventState;
+import ru.practicum.ewm.core.interaction.dto.event.AdminEventSearchRequest;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
+import ru.practicum.ewm.core.interaction.dto.event.UpdateEventAdminDto;
+import ru.practicum.ewm.core.interaction.enums.EventState;
 import ru.practicum.ewm.core.main.service.event.EventService;
 
 import java.util.List;

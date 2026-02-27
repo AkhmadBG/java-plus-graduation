@@ -1,8 +1,8 @@
 package ru.practicum.ewm.core.main.service.compilation;
 
-import ru.practicum.ewm.core.main.dto.compilation.CompilationDto;
-import ru.practicum.ewm.core.main.dto.compilation.NewCompilationDto;
-import ru.practicum.ewm.core.main.dto.compilation.UpdateCompilationRequest;
+import ru.practicum.ewm.core.interaction.dto.compilation.CompilationDto;
+import ru.practicum.ewm.core.interaction.dto.compilation.NewCompilationDto;
+import ru.practicum.ewm.core.interaction.dto.compilation.UpdateCompilationRequest;
 
 import java.util.List;
 

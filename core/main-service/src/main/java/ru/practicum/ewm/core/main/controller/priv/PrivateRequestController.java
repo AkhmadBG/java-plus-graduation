@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.core.main.dto.request.ParticipationRequestDto;
+import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.core.main.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.core.main.service.request.ParticipationRequestService;
 

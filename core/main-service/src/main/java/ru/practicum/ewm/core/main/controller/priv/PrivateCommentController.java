@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.core.main.dto.comment.CommentDto;
-import ru.practicum.ewm.core.main.dto.comment.CreateCommentDto;
+import ru.practicum.ewm.core.interaction.dto.comment.CommentDto;
+import ru.practicum.ewm.core.interaction.dto.comment.CreateCommentDto;
 import ru.practicum.ewm.core.main.service.comment.CommentService;
 
 import java.util.List;

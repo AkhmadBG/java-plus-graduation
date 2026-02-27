@@ -1,9 +1,9 @@
 package ru.practicum.ewm.core.main.mapper;
 
 import org.mapstruct.*;
-import ru.practicum.ewm.core.main.dto.compilation.CompilationDto;
-import ru.practicum.ewm.core.main.dto.compilation.NewCompilationDto;
-import ru.practicum.ewm.core.main.dto.compilation.UpdateCompilationRequest;
+import ru.practicum.ewm.core.interaction.dto.compilation.CompilationDto;
+import ru.practicum.ewm.core.interaction.dto.compilation.NewCompilationDto;
+import ru.practicum.ewm.core.interaction.dto.compilation.UpdateCompilationRequest;
 import ru.practicum.ewm.core.main.entity.Compilation;
 import ru.practicum.ewm.core.main.entity.Event;
 

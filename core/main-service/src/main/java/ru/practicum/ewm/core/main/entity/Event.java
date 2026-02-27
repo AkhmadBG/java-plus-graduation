@@ -2,7 +2,7 @@ package ru.practicum.ewm.core.main.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.practicum.ewm.core.main.enums.EventState;
+import ru.practicum.ewm.core.interaction.enums.EventState;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -77,5 +77,6 @@ public class Event {
 
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     private List<Comment> comments;
+
 
 }

@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.core.main.dto.compilation.CompilationDto;
-import ru.practicum.ewm.core.main.dto.compilation.NewCompilationDto;
-import ru.practicum.ewm.core.main.dto.compilation.UpdateCompilationRequest;
+import ru.practicum.ewm.core.interaction.dto.compilation.CompilationDto;
+import ru.practicum.ewm.core.interaction.dto.compilation.NewCompilationDto;
+import ru.practicum.ewm.core.interaction.dto.compilation.UpdateCompilationRequest;
 import ru.practicum.ewm.core.main.service.compilation.CompilationService;
 
 @RestController

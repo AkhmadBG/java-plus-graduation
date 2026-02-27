@@ -14,20 +14,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.core.main.dto.event.*;
-import ru.practicum.ewm.core.main.exception.*;
-import ru.practicum.ewm.core.main.dto.event.*;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
+import ru.practicum.ewm.core.interaction.exceptions.*;
+import ru.practicum.ewm.core.interaction.dto.event.*;
 import ru.practicum.ewm.core.main.entity.Category;
 import ru.practicum.ewm.core.main.entity.Event;
 import ru.practicum.ewm.core.main.entity.Location;
 import ru.practicum.ewm.core.main.entity.User;
-import ru.practicum.ewm.core.main.enums.EventState;
-import ru.practicum.ewm.core.main.enums.SortValue;
-import ru.practicum.ewm.core.main.exception.*;
+import ru.practicum.ewm.core.interaction.enums.EventState;
+import ru.practicum.ewm.core.interaction.enums.SortValue;
 import ru.practicum.ewm.core.main.mapper.EventMapper;
 import ru.practicum.ewm.core.main.repository.CategoryRepository;
 import ru.practicum.ewm.core.main.repository.EventRepository;
-import ru.practicum.ewm.core.main.repository.UserRepository;
 import ru.practicum.ewm.stats.client.StatisticsService;
 
 import java.time.LocalDateTime;
@@ -35,8 +33,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static ru.practicum.ewm.core.main.util.DateFormatter.parse;
-import static ru.practicum.ewm.core.main.util.SearchValidators.*;
+import static ru.practicum.ewm.core.interaction.util.DateFormatter.parse;
+import static ru.practicum.ewm.core.interaction.util.SearchValidators.*;
+
 
 @Slf4j
 @Service

@@ -1,8 +1,8 @@
 package ru.practicum.ewm.core.main.service.category;
 
-import ru.practicum.ewm.core.main.dto.category.CategoryDto;
-import ru.practicum.ewm.core.main.dto.category.NewCategoryDto;
-import ru.practicum.ewm.core.main.dto.category.UpdateCategoryDto;
+import ru.practicum.ewm.core.interaction.dto.category.CategoryDto;
+import ru.practicum.ewm.core.interaction.dto.category.NewCategoryDto;
+import ru.practicum.ewm.core.interaction.dto.category.UpdateCategoryDto;
 
 import java.util.List;
 

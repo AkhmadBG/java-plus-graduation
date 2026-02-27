@@ -1,7 +1,7 @@
 package ru.practicum.ewm.core.main.service.event;
 
 import jakarta.servlet.http.HttpServletRequest;
-import ru.practicum.ewm.core.main.dto.event.*;
+import ru.practicum.ewm.core.interaction.dto.event.*;
 import ru.practicum.ewm.core.main.entity.Event;
 
 import java.util.List;

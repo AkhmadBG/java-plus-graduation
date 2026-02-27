@@ -1,7 +1,7 @@
 package ru.practicum.ewm.core.main.service.comment;
 
-import ru.practicum.ewm.core.main.dto.comment.CommentDto;
-import ru.practicum.ewm.core.main.dto.comment.CreateCommentDto;
+import ru.practicum.ewm.core.interaction.dto.comment.CommentDto;
+import ru.practicum.ewm.core.interaction.dto.comment.CreateCommentDto;
 
 import java.util.List;
 

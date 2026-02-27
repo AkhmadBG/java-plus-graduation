@@ -2,7 +2,7 @@ package ru.practicum.ewm.core.main.controller.pub;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.core.main.dto.compilation.CompilationDto;
+import ru.practicum.ewm.core.interaction.dto.compilation.CompilationDto;
 import ru.practicum.ewm.core.main.service.compilation.CompilationService;
 
 import java.util.List;
