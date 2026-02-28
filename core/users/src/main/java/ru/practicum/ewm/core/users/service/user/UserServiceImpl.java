@@ -8,12 +8,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.core.interaction.dto.user.NewUserRequest;
 import ru.practicum.ewm.core.interaction.dto.user.UserDto;
+import ru.practicum.ewm.core.interaction.dto.user.UserShortDto;
 import ru.practicum.ewm.core.interaction.exceptions.ConflictException;
 import ru.practicum.ewm.core.interaction.exceptions.UserNotExistException;
 import ru.practicum.ewm.core.users.entity.User;
 import ru.practicum.ewm.core.users.mapper.UserMapper;
 import ru.practicum.ewm.core.users.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -65,6 +67,34 @@ public class UserServiceImpl implements UserService {
         }
 
         repository.deleteById(userId);
+    }
+
+    @Override
+    public UserDto getUser(Long userId) {
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new UserNotExistException("User with id=%d not found.".formatted(userId)));
+        return userMapper.toDto(user);
+    }
+
+    @Override
+    public Boolean userExists(Long userId) {
+        return null;
+    }
+
+    @Override
+    public List<UserDto> getUsersByIds(List<Long> ids) {
+        List<User> users = repository.findAllById(ids);
+        return users.stream()
+                .map(userMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<UserShortDto> getUserUsersShortDtoByIds(List<Long> ids) {
+        List<User> users = repository.findAllById(ids);
+        return users.stream()
+                .map(userMapper::toUserShortDto)
+                .toList();
     }
 
 }

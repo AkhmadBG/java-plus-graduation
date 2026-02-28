@@ -1,6 +1,7 @@
 package ru.practicum.ewm.core.interaction.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -59,5 +60,8 @@ public class EventFullDto {
     private String title;
 
     private Long views;
+
+    @JsonIgnore
+    private Long initiatorId;
 
 }

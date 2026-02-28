@@ -7,11 +7,11 @@ import ru.practicum.ewm.core.interaction.enums.RequestStatus;
 import java.util.List;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
-    List<ParticipationRequest> findByRequesterId(Long userId);
+    List<ParticipationRequest> findByRequester(Long userId);
 
-    Boolean existsByRequesterIdAndEventId(Long requesterId, Long eventId);
+    Boolean existsByRequesterAndEventId(Long requesterId, Long eventId);
 
-    List<ParticipationRequest> findAllByRequester_IdAndEvent_Id(Long userId, Long eventId);
+    List<ParticipationRequest> findAllByRequester_AndEvent_Id(Long userId, Long eventId);
 
     List<ParticipationRequest> findByEventIdAndStatus(Long eventId, RequestStatus status);
 

@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.core.interaction.apiinterface.adm.AdminUserOperations;
 import ru.practicum.ewm.core.interaction.dto.user.NewUserRequest;
 import ru.practicum.ewm.core.interaction.dto.user.UserDto;
+import ru.practicum.ewm.core.interaction.dto.user.UserShortDto;
 import ru.practicum.ewm.core.users.service.user.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -44,6 +46,26 @@ public class AdminUserController implements AdminUserOperations {
     public void deleteUser(@PathVariable Long userId) {
         log.info("Admin request: delete user with id={}", userId);
         userService.deleteUser(userId);
+    }
+
+    @GetMapping("/{userId}/exists")
+    public Boolean userExists(@PathVariable Long userId) {
+        return userService.userExists(userId);
+    }
+
+    @GetMapping("/{userId}")
+    public UserDto getUser(@PathVariable Long userId) {
+        return userService.getUser(userId);
+    }
+
+    @GetMapping("/dto")
+    public List<UserDto> getUsersByIds(@RequestParam List<Long> ids) {
+        return userService.getUsersByIds(ids);
+    }
+
+    @GetMapping("/shortdto")
+    public List<UserShortDto> getUsersShortDtoByIds(@RequestParam List<Long> ids) {
+        return userService.getUserUsersShortDtoByIds(ids);
     }
 
 }

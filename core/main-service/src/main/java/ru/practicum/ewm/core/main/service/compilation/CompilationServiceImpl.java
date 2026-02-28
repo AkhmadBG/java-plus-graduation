@@ -9,16 +9,17 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.core.interaction.dto.compilation.CompilationDto;
 import ru.practicum.ewm.core.interaction.dto.compilation.NewCompilationDto;
 import ru.practicum.ewm.core.interaction.dto.compilation.UpdateCompilationRequest;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
+import ru.practicum.ewm.core.interaction.dto.user.UserShortDto;
 import ru.practicum.ewm.core.interaction.exceptions.NotFoundException;
+import ru.practicum.ewm.core.interaction.feignclient.adm.AdminUserFeignClient;
 import ru.practicum.ewm.core.main.entity.Compilation;
 import ru.practicum.ewm.core.main.entity.Event;
 import ru.practicum.ewm.core.main.mapper.CompilationMapper;
 import ru.practicum.ewm.core.main.repository.CompilationRepository;
 import ru.practicum.ewm.core.main.service.event.EventServiceImpl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,16 +28,52 @@ public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventServiceImpl eventServiceImpl;
+    private final AdminUserFeignClient adminUserFeignClient;
     private final CompilationMapper compilationMapper;
+
+//    @Override
+//    public List<CompilationDto> getCompilations(int from, int size) {
+//        Pageable pageable = PageRequest.of(from / size, size, Sort.by("id").descending());
+//        Page<Compilation> compilations = compilationRepository.findAll(pageable);
+//        return compilations.getContent()
+//                .stream()
+//                .map(compilationMapper::toCompilationDto)
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public List<CompilationDto> getCompilations(int from, int size) {
+
         Pageable pageable = PageRequest.of(from / size, size, Sort.by("id").descending());
-        Page<Compilation> compilations = compilationRepository.findAll(pageable);
-        return compilations.getContent()
-                .stream()
+        List<Compilation> compilations = compilationRepository.findAll(pageable).getContent();
+
+        List<CompilationDto> dtos = compilations.stream()
                 .map(compilationMapper::toCompilationDto)
                 .collect(Collectors.toList());
+
+        Set<Long> userIds = dtos.stream()
+                .flatMap(c -> c.getEvents().stream())
+                .map(EventFullDto::getInitiatorId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        List<Long> userIdList = new ArrayList<>(userIds);
+
+        Map<Long, UserShortDto> usersMap = adminUserFeignClient
+                .getUsersShortDtoByIds(userIdList)
+                .stream()
+                .collect(Collectors.toMap(
+                        UserShortDto::getId,   // ключ
+                        user -> user            // значение
+                ));
+
+        dtos.forEach(compilation ->
+                compilation.getEvents().forEach(event ->
+                        event.setInitiator(usersMap.get(event.getInitiatorId()))
+                )
+        );
+
+        return dtos;
     }
 
     @Override

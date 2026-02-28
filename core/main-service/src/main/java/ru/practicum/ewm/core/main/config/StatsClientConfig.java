@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.interaction.config;
+package ru.practicum.ewm.core.main.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,4 +22,5 @@ public class StatsClientConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
 }

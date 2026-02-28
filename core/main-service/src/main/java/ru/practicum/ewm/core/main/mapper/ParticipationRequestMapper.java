@@ -10,7 +10,7 @@ import ru.practicum.ewm.core.interaction.util.DateFormatter;
 public interface ParticipationRequestMapper {
 
     @Mapping(target = "created", expression = "java(formatDate(request.getCreated()))")
-    @Mapping(target = "requester", source = "requester.id")
+    @Mapping(target = "requester", source = "requester")
     @Mapping(target = "event", source = "event.id")
     ParticipationRequestDto toDto(ParticipationRequest request);
 

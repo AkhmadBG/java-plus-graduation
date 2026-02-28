@@ -7,18 +7,18 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.core.interaction.dto.event.UpdateParticipationRequestListDto;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.core.interaction.dto.request.UpdateParticipationRequestDto;
+import ru.practicum.ewm.core.interaction.exceptions.CommentNotExistException;
 import ru.practicum.ewm.core.interaction.exceptions.ConflictException;
 import ru.practicum.ewm.core.interaction.exceptions.ForbiddenException;
 import ru.practicum.ewm.core.interaction.exceptions.NotFoundException;
+import ru.practicum.ewm.core.interaction.feignclient.adm.AdminUserFeignClient;
 import ru.practicum.ewm.core.main.entity.Event;
 import ru.practicum.ewm.core.main.entity.ParticipationRequest;
-import ru.practicum.ewm.core.main.entity.User;
 import ru.practicum.ewm.core.interaction.enums.EventState;
 import ru.practicum.ewm.core.interaction.enums.RequestStatus;
 import ru.practicum.ewm.core.main.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.core.main.repository.EventRepository;
 import ru.practicum.ewm.core.main.repository.ParticipationRequestRepository;
-import ru.practicum.ewm.core.main.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,26 +29,32 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
 
-    private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final ParticipationRequestRepository requestRepository;
     private final ParticipationRequestMapper participationRequestMapper;
+    private final AdminUserFeignClient adminUserFeignClient;
 
     @Transactional
     public List<ParticipationRequest> getUserRequests(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=%d was not found".formatted(userId)));
-        return requestRepository.findByRequesterId(userId);
+        Boolean userExists = adminUserFeignClient.userExists(userId);
+        if (!userExists) {
+            throw new CommentNotExistException("Not possible create Comment - " + "Does not exist User with Id " + userId);
+        }
+        return requestRepository.findByRequester(userId);
     }
 
     @Transactional
     public ParticipationRequest addRequest(Long userId, Long eventId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=%d was not found".formatted(userId)));
+        Boolean userExists = adminUserFeignClient.userExists(userId);
+
+        if (!userExists) {
+            throw new CommentNotExistException("Not possible create Comment - " + "Does not exist User with Id " + userId);
+        }
+
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=%d was not found".formatted(eventId)));
 
-        if (event.getInitiator().getId().equals(userId)) {
+        if (event.getInitiator().equals(userId)) {
             throw new ConflictException("Initiator cannot request own event");
         }
 
@@ -56,7 +62,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ConflictException("Event is not published");
         }
 
-        if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
+        if (requestRepository.existsByRequesterAndEventId(userId, eventId)) {
             throw new ConflictException("Request already exists");
         }
 
@@ -65,7 +71,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         ParticipationRequest request = new ParticipationRequest();
-        request.setRequester(user);
+        request.setRequester(userId);
         request.setEvent(event);
         request.setCreated(LocalDateTime.now());
         if (event.getRequestModeration() && event.getParticipantLimit() != 0) {
@@ -83,7 +89,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         ParticipationRequest request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Request with id=%d was not found".formatted(requestId)));
 
-        if (!request.getRequester().getId().equals(userId)) {
+        if (!request.getRequester().equals(userId)) {
             throw new ForbiddenException("Cannot cancel another user's request");
         }
 
@@ -96,7 +102,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiator().equals(userId)) {
             throw new ForbiddenException("User is not the initiator of the event");
         }
 
@@ -113,7 +119,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiator().equals(userId)) {
             throw new ForbiddenException("User is not the initiator of the event");
         }
 

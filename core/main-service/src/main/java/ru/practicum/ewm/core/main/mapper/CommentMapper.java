@@ -9,11 +9,11 @@ import ru.practicum.ewm.core.main.entity.Comment;
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
 
-    @Mapping(source = "owner.name", target = "ownerName")
-    @Mapping(source = "event.id", target = "event")
-    CommentDto toCommentDto(Comment comment);
+    @Mapping(target = "ownerName")
+    @Mapping(source = "comment.event.id", target = "event")
+    CommentDto toCommentDto(Comment comment, String ownerName);
 
-    @Mapping(source = "eventId", target = "owner.id")
+    @Mapping(source = "userId", target = "owner")
     @Mapping(source = "eventId", target = "event.id")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)

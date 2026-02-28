@@ -25,9 +25,8 @@ public class Comment {
     @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
     private Event event;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
-    private User owner;
+    @Column(name = "owner_id", nullable = false)
+    private Long owner;
 
     private LocalDateTime created;
 

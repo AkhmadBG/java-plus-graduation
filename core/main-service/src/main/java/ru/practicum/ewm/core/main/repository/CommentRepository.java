@@ -12,9 +12,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Page<Comment> findAllByEventId(Long eventId, Pageable pageable);
 
-    Optional<Comment> findByIdAndOwnerId(Long commentId, Long ownerId);
+    Optional<Comment> findByIdAndOwner(Long commentId, Long ownerId);
 
-    void deleteByIdAndOwnerId(Long commentId, Long ownerId);
+    void deleteByIdAndOwner(Long commentId, Long ownerId);
 
     List<Comment> findAllByTextIsLikeIgnoreCase(String text);
 

@@ -1,23 +1,21 @@
 package ru.practicum.ewm.core.main.mapper;
 
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.dto.event.EventShortDto;
 import ru.practicum.ewm.core.interaction.dto.event.LocationDto;
 import ru.practicum.ewm.core.interaction.dto.event.NewEventDto;
+import ru.practicum.ewm.core.interaction.dto.user.UserDto;
+import ru.practicum.ewm.core.interaction.dto.user.UserShortDto;
 import ru.practicum.ewm.core.main.entity.Category;
 import ru.practicum.ewm.core.main.entity.Event;
-import ru.practicum.ewm.core.main.entity.User;
 import ru.practicum.ewm.core.interaction.enums.EventState;
 import ru.practicum.ewm.core.interaction.util.DateFormatter;
 
 import java.time.LocalDateTime;
 
 @Mapper(componentModel = "spring",
-        uses = {CategoryMapper.class, UserMapper.class, LocationMapper.class},
+        uses = {CategoryMapper.class, LocationMapper.class},
         imports = {LocalDateTime.class, EventState.class})
 public interface EventMapper {
 
@@ -34,17 +32,34 @@ public interface EventMapper {
     @Mapping(target = "category", source = "category")
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "comments", ignore = true)
-    Event toEvent(NewEventDto newEventDto, Category category, User initiator,
+    Event toEvent(NewEventDto newEventDto, Category category, Long initiator,
                   LocationDto location);
 
+    @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "eventDate", expression = "java(formatDate(event.getEventDate()))")
     @Mapping(target = "createdOn", expression = "java(formatDate(event.getCreatedOn()))")
     @Mapping(target = "publishedOn", expression = "java(formatDate(event.getPublishedOn()))")
     @Mapping(target = "state", expression = "java(event.getState().name())")
-    EventFullDto toEventFullDto(Event event);
+    @Mapping(target = "initiator", ignore = true)
+    EventFullDto toEventFullDto(Event event, UserDto user);
 
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "event.id")
     @Mapping(target = "eventDate", expression = "java(formatDate(event.getEventDate()))")
-    EventShortDto toEventShortDto(Event event);
+    @Mapping(target = "initiator", ignore = true)
+    EventShortDto toEventShortDto(Event event, UserDto user);
+
+    @AfterMapping
+    default void setInitiator(@MappingTarget EventShortDto dto, UserDto user) {
+        if (user == null) {
+            return;
+        }
+
+        UserShortDto shortDto = new UserShortDto();
+        shortDto.setId(user.getId());
+        shortDto.setName(user.getName());
+        dto.setInitiator(shortDto);
+    }
 
     default String formatDate(LocalDateTime dateTime) {
         return DateFormatter.format(dateTime);
@@ -66,5 +81,9 @@ public interface EventMapper {
             eventBuilder.requestModeration(true);
         }
     }
+
+    @Mapping(target = "initiator", ignore = true)
+    @Mapping(target = "initiatorId", source = "initiator")
+    EventFullDto toEventFullDto(Event event);
 
 }
