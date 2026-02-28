@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.ewm.core.interaction.apiinterface.pub.PublicCommentOperations;
 import ru.practicum.ewm.core.interaction.dto.comment.CommentDto;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.main.service.comment.CommentService;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class PublicCommentController {
+public class PublicCommentController implements PublicCommentOperations {
 
     private final CommentService commentService;
     private final EventService eventService;

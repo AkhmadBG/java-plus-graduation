@@ -1,4 +1,8 @@
 package ru.practicum.ewm.core.interaction.feignclient.pub;
 
-public interface PublicCompilationFeignClient {
+import org.springframework.cloud.openfeign.FeignClient;
+import ru.practicum.ewm.core.interaction.apiinterface.pub.PublicCompilationOperations;
+
+@FeignClient(name = "events", path = "/compilations")
+public interface PublicCompilationFeignClient extends PublicCompilationOperations {
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.core.interaction.apiinterface.priv.PrivateCommentOperations;
 import ru.practicum.ewm.core.interaction.dto.comment.CommentDto;
 import ru.practicum.ewm.core.interaction.dto.comment.CreateCommentDto;
 import ru.practicum.ewm.core.main.service.comment.CommentService;
@@ -13,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
-public class PrivateCommentController {
+public class PrivateCommentController implements PrivateCommentOperations {
 
     private final CommentService commentService;
 
@@ -43,7 +44,5 @@ public class PrivateCommentController {
     public List<CommentDto> findCommentByText(@RequestParam(name = "query", defaultValue = "") String text) {
         return commentService.findCommentByText(text);
     }
-
-
 
 }

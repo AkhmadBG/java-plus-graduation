@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.core.interaction.apiinterface.adm.AdminCompilationOperations;
 import ru.practicum.ewm.core.interaction.dto.compilation.CompilationDto;
 import ru.practicum.ewm.core.interaction.dto.compilation.NewCompilationDto;
 import ru.practicum.ewm.core.interaction.dto.compilation.UpdateCompilationRequest;
@@ -13,7 +14,7 @@ import ru.practicum.ewm.core.main.service.compilation.CompilationService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/compilations")
-public class AdminCompilationController {
+public class AdminCompilationController implements AdminCompilationOperations {
 
     private final CompilationService compilationService;
 
@@ -34,4 +35,5 @@ public class AdminCompilationController {
                                                 @Valid @RequestBody UpdateCompilationRequest updateCompilationRequest) {
         return compilationService.updateCompilationById(compId, updateCompilationRequest);
     }
+
 }

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.core.interaction.apiinterface.adm.AdminEventOperations;
 import ru.practicum.ewm.core.interaction.dto.event.AdminEventSearchRequest;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.dto.event.UpdateEventAdminDto;
@@ -16,7 +17,8 @@ import java.util.List;
 @RequestMapping("/admin/events")
 @RequiredArgsConstructor
 @Validated
-public class AdminEventController {
+public class AdminEventController implements AdminEventOperations {
+
     private final EventService eventService;
 
     @GetMapping
@@ -39,4 +41,5 @@ public class AdminEventController {
                                     @Valid @RequestBody UpdateEventAdminDto updateEventAdminDto) {
         return eventService.updateEvent(eventId, updateEventAdminDto);
     }
+
 }

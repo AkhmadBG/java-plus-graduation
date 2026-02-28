@@ -20,6 +20,7 @@
         <module>requests</module>
         <module>users</module>
         <module>interaction</module>
+        <module>comments</module>
     </modules>
 
 </project>

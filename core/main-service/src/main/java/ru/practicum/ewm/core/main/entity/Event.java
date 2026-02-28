@@ -78,5 +78,4 @@ public class Event {
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-
 }

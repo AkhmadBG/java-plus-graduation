@@ -1,4 +1,8 @@
 package ru.practicum.ewm.core.interaction.feignclient.pub;
 
-public interface PublicEventFeignClient {
+import org.springframework.cloud.openfeign.FeignClient;
+import ru.practicum.ewm.core.interaction.apiinterface.pub.PublicEventOperations;
+
+@FeignClient(name = "events", path = "/events")
+public interface PublicEventFeignClient extends PublicEventOperations {
 }

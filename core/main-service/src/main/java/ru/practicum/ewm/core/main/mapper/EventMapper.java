@@ -66,4 +66,5 @@ public interface EventMapper {
             eventBuilder.requestModeration(true);
         }
     }
+
 }

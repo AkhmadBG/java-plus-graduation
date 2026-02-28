@@ -8,6 +8,7 @@ import ru.practicum.ewm.core.main.entity.ParticipationRequest;
 import java.util.List;
 
 public interface ParticipationRequestService {
+
     List<ParticipationRequest> getUserRequests(Long userId);
 
     ParticipationRequest addRequest(Long userId, Long eventId);
@@ -17,4 +18,5 @@ public interface ParticipationRequestService {
     List<ParticipationRequestDto> getUserRequestsByEventId(Long userId, Long eventId);
 
     UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, UpdateParticipationRequestDto updateParticipationRequestDto);
+
 }

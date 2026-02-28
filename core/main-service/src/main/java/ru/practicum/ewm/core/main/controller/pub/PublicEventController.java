@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.core.interaction.apiinterface.pub.PublicEventOperations;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.dto.event.PublicEventSearchRequest;
 import ru.practicum.ewm.core.interaction.enums.SortValue;
@@ -15,7 +16,8 @@ import java.util.List;
 @RequestMapping("/events")
 @RequiredArgsConstructor
 @Validated
-public class PublicEventController {
+public class PublicEventController implements PublicEventOperations {
+
     private final EventService eventService;
 
     @GetMapping
@@ -42,4 +44,5 @@ public class PublicEventController {
                                  HttpServletRequest request) {
         return eventService.getEvent(id, request);
     }
+
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.core.interaction.apiinterface.adm.AdminCategoryOperations;
 import ru.practicum.ewm.core.interaction.dto.category.CategoryDto;
 import ru.practicum.ewm.core.interaction.dto.category.NewCategoryDto;
 import ru.practicum.ewm.core.interaction.dto.category.UpdateCategoryDto;
@@ -13,7 +14,8 @@ import ru.practicum.ewm.core.main.service.category.CategoryService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
-public class AdminCategoryController {
+public class AdminCategoryController implements AdminCategoryOperations {
+
     private final CategoryService categoryService;
 
     @PostMapping("/categories")
@@ -33,4 +35,5 @@ public class AdminCategoryController {
                               @Valid @RequestBody UpdateCategoryDto updateCategoryDto) {
         return categoryService.updateCategory(catId, updateCategoryDto);
     }
+
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.core.interaction.apiinterface.priv.PrivateEventOperations;
 import ru.practicum.ewm.core.interaction.dto.event.*;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.core.interaction.dto.request.UpdateParticipationRequestDto;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
-public class PrivateEventController {
+public class PrivateEventController implements PrivateEventOperations {
 
     private final EventService eventService;
     private final ParticipationRequestService participationRequestService;

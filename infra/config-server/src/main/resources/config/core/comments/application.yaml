@@ -1,0 +1,22 @@
+server:
+  port: 0
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      show_sql: true
+      format_sql: true
+  sql:
+    init:
+      mode: always
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5425/ewm-core-comments
+    username: dbuser
+    password: 12345
+
+logging:
+  level:
+    root: INFO

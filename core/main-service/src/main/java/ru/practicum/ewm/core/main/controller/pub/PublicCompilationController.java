@@ -2,6 +2,7 @@ package ru.practicum.ewm.core.main.controller.pub;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.core.interaction.apiinterface.pub.PublicCompilationOperations;
 import ru.practicum.ewm.core.interaction.dto.compilation.CompilationDto;
 import ru.practicum.ewm.core.main.service.compilation.CompilationService;
 
@@ -10,7 +11,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/compilations")
-public class PublicCompilationController {
+public class PublicCompilationController implements PublicCompilationOperations {
 
     private final CompilationService compilationService;
 

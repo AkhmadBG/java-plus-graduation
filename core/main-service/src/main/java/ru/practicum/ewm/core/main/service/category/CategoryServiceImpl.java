@@ -23,6 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
+
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
     private final CategoryMapper categoryMapper;
@@ -94,4 +95,5 @@ public class CategoryServiceImpl implements CategoryService {
         Category updateCategory = categoryRepository.save(category);
         return categoryMapper.toCategoryDto(updateCategory);
     }
+
 }

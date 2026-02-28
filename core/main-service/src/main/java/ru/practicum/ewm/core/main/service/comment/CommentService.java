@@ -6,6 +6,7 @@ import ru.practicum.ewm.core.interaction.dto.comment.CreateCommentDto;
 import java.util.List;
 
 public interface CommentService {
+
     List<CommentDto> getEventComments(Long eventId, int from, int size);
 
     CommentDto create(Long eventId, Long userId, CreateCommentDto createCommentDto);
@@ -17,4 +18,5 @@ public interface CommentService {
     List<CommentDto> findCommentByText(String text);
 
     CommentDto getCommentById(Long commentId);
+
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.core.interaction.apiinterface.priv.PrivateRequestOperations;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.core.main.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.core.main.service.request.ParticipationRequestService;
@@ -16,7 +17,7 @@ import java.util.List;
 @RequestMapping("/users/{userId}/requests")
 @RequiredArgsConstructor
 @Validated
-public class PrivateRequestController {
+public class PrivateRequestController implements PrivateRequestOperations {
 
     private final ParticipationRequestService service;
     private final ParticipationRequestMapper participationRequestMapper;
@@ -40,4 +41,5 @@ public class PrivateRequestController {
                                                  @PathVariable("requestId") @NotNull @Positive Long requestId) {
         return participationRequestMapper.toDto(service.cancelRequest(userId, requestId));
     }
+
 }

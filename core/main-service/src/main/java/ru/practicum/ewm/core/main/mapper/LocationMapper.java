@@ -12,4 +12,5 @@ public interface LocationMapper {
 
     @Mapping(target = "id", source = "id")
     Location toEntity(LocationDto locationDto);
+
 }
