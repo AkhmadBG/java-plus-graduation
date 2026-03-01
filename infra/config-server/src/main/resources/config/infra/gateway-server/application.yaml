@@ -22,6 +22,11 @@ spring:
           predicates:
             - Path=/admin/users/**
 
+        - id: requests
+          uri: lb://requests
+          predicates:
+            - Path=/users/**/requests
+
 logging:
   level:
     org.springframework.cloud.gateway: INFO

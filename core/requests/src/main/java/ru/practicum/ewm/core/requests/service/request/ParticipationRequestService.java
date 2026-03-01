@@ -1,9 +1,9 @@
-package ru.practicum.ewm.core.main.service.request;
+package ru.practicum.ewm.core.requests.service.request;
 
 import ru.practicum.ewm.core.interaction.dto.event.UpdateParticipationRequestListDto;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.core.interaction.dto.request.UpdateParticipationRequestDto;
-import ru.practicum.ewm.core.main.entity.ParticipationRequest;
+import ru.practicum.ewm.core.requests.entity.ParticipationRequest;
 
 import java.util.List;
 

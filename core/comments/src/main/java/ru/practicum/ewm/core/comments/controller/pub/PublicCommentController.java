@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.main.controller.pub;
+package ru.practicum.ewm.core.comments.controller.pub;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

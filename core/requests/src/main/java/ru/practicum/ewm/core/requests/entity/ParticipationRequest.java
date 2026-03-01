@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.main.entity;
+package ru.practicum.ewm.core.requests.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,9 +21,8 @@ public class ParticipationRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
+    @Column(name = "event_id")
+    private Long event;
 
     @Column(name = "requester_id")
     private Long requester;

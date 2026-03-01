@@ -25,20 +25,20 @@ services:
 #    volumes:
 #      - ewm_core_categories_data:/var/lib/postgresql/data
 #    restart: on-failure
-#
-#  comments-db:
-#    image: postgres:16.1
-#    container_name: ewm-core-comments-db-container
-#    ports:
-#      - "5425:5432"
-#    environment:
-#      - POSTGRES_DB=ewm-core-comments
-#      - POSTGRES_USER=dbuser
-#      - POSTGRES_PASSWORD=12345
-#    volumes:
-#      - ewm_core_comments_data:/var/lib/postgresql/data
-#    restart: on-failure
-#
+
+  comments-db:
+    image: postgres:16.1
+    container_name: ewm-core-comments-db-container
+    ports:
+      - "5425:5432"
+    environment:
+      - POSTGRES_DB=ewm-core-comments
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    volumes:
+      - ewm_core_comments_data:/var/lib/postgresql/data
+    restart: on-failure
+
 #  events-db:
 #    image: postgres:16.1
 #    container_name: ewm-core-events-db-container
@@ -51,19 +51,19 @@ services:
 #    volumes:
 #      - ewm_core_events_data:/var/lib/postgresql/data
 #    restart: on-failure
-#
-#  requests-db:
-#    image: postgres:16.1
-#    container_name: ewm-core-requests-db-container
-#    ports:
-#      - "5428:5432"
-#    environment:
-#      - POSTGRES_DB=ewm-core-requests
-#      - POSTGRES_USER=dbuser
-#      - POSTGRES_PASSWORD=12345
-#    volumes:
-#      - ewm_core_requests_data:/var/lib/postgresql/data
-#    restart: on-failure
+
+  requests-db:
+    image: postgres:16.1
+    container_name: ewm-core-requests-db-container
+    ports:
+      - "5428:5432"
+    environment:
+      - POSTGRES_DB=ewm-core-requests
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    volumes:
+      - ewm_core_requests_data:/var/lib/postgresql/data
+    restart: on-failure
 
   users-db:
     image: postgres:16.1
@@ -95,7 +95,7 @@ volumes:
   ewm_stats_data:
   ewm_main_data:
 #  ewm_core_categories_data:
-#  ewm_core_comments_data:
+  ewm_core_comments_data:
 #  ewm_core_events_data:
-#  ewm_core_requests_data:
+  ewm_core_requests_data:
   ewm_core_users_data:

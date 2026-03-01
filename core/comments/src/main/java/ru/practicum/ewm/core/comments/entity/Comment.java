@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.main.entity;
+package ru.practicum.ewm.core.comments.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

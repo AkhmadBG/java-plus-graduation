@@ -27,4 +27,7 @@ public interface PublicEventOperations {
     @GetMapping("/{id}")
     EventFullDto getEvent(@PathVariable Long id, HttpServletRequest request);
 
+    @GetMapping("/event/info/{eventId}")
+    EventFullDto getEventFullDto(@PathVariable Long eventId, Long userId);
+
 }

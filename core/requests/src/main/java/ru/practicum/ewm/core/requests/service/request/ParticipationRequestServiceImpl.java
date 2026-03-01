@@ -1,9 +1,10 @@
-package ru.practicum.ewm.core.main.service.request;
+package ru.practicum.ewm.core.requests.service.request;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.dto.event.UpdateParticipationRequestListDto;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.core.interaction.dto.request.UpdateParticipationRequestDto;
@@ -11,14 +12,14 @@ import ru.practicum.ewm.core.interaction.exceptions.CommentNotExistException;
 import ru.practicum.ewm.core.interaction.exceptions.ConflictException;
 import ru.practicum.ewm.core.interaction.exceptions.ForbiddenException;
 import ru.practicum.ewm.core.interaction.exceptions.NotFoundException;
+import ru.practicum.ewm.core.interaction.feignclient.adm.AdminEventFeignClient;
 import ru.practicum.ewm.core.interaction.feignclient.adm.AdminUserFeignClient;
-import ru.practicum.ewm.core.main.entity.Event;
-import ru.practicum.ewm.core.main.entity.ParticipationRequest;
 import ru.practicum.ewm.core.interaction.enums.EventState;
 import ru.practicum.ewm.core.interaction.enums.RequestStatus;
-import ru.practicum.ewm.core.main.mapper.ParticipationRequestMapper;
-import ru.practicum.ewm.core.main.repository.EventRepository;
-import ru.practicum.ewm.core.main.repository.ParticipationRequestRepository;
+import ru.practicum.ewm.core.interaction.feignclient.pub.PublicEventFeignClient;
+import ru.practicum.ewm.core.requests.entity.ParticipationRequest;
+import ru.practicum.ewm.core.requests.mapper.ParticipationRequestMapper;
+import ru.practicum.ewm.core.requests.repository.ParticipationRequestRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,10 +30,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
 
-    private final EventRepository eventRepository;
+    private final AdminEventFeignClient adminEventFeignClient;
+    private final PublicEventFeignClient publicEventFeignClient;
+
+    private final AdminUserFeignClient adminUserFeignClient;
+
     private final ParticipationRequestRepository requestRepository;
     private final ParticipationRequestMapper participationRequestMapper;
-    private final AdminUserFeignClient adminUserFeignClient;
 
     @Transactional
     public List<ParticipationRequest> getUserRequests(Long userId) {
@@ -51,34 +55,33 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new CommentNotExistException("Not possible create Comment - " + "Does not exist User with Id " + userId);
         }
 
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=%d was not found".formatted(eventId)));
+        EventFullDto eventFullDto = publicEventFeignClient.getEventFullDto(eventId, userId);
 
-        if (event.getInitiator().equals(userId)) {
+        if (eventFullDto.getInitiator().equals(userId)) {
             throw new ConflictException("Initiator cannot request own event");
         }
 
-        if (event.getState() != EventState.PUBLISHED) {
+        if (EventState.valueOf(eventFullDto.getState()) != EventState.PUBLISHED) {
             throw new ConflictException("Event is not published");
         }
 
-        if (requestRepository.existsByRequesterAndEventId(userId, eventId)) {
+        if (requestRepository.existsByRequesterAndEvent(userId, eventId)) {
             throw new ConflictException("Request already exists");
         }
 
-        if (event.getParticipantLimit() > 0 && event.getConfirmedRequests() >= event.getParticipantLimit()) {
+        if (eventFullDto.getParticipantLimit() > 0 && eventFullDto.getConfirmedRequests() >= eventFullDto.getParticipantLimit()) {
             throw new ConflictException("Participant limit reached");
         }
 
         ParticipationRequest request = new ParticipationRequest();
         request.setRequester(userId);
-        request.setEvent(event);
+        request.setEvent(eventId);
         request.setCreated(LocalDateTime.now());
-        if (event.getRequestModeration() && event.getParticipantLimit() != 0) {
+        if (eventFullDto.getRequestModeration() && eventFullDto.getParticipantLimit() != 0) {
             request.setStatus(RequestStatus.PENDING);
         } else {
             request.setStatus(RequestStatus.CONFIRMED);
-            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+            eventFullDto.setConfirmedRequests(eventFullDto.getConfirmedRequests() + 1);
         }
 
         return requestRepository.save(request);
@@ -99,14 +102,13 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     @Override
     public List<ParticipationRequestDto> getUserRequestsByEventId(Long userId, Long eventId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+        EventFullDto eventFullDto = publicEventFeignClient.getEventFullDto(eventId, userId);
 
-        if (!event.getInitiator().equals(userId)) {
+        if (!eventFullDto.getInitiator().equals(userId)) {
             throw new ForbiddenException("User is not the initiator of the event");
         }
 
-        List<ParticipationRequest> requests = requestRepository.findByEventId(eventId);
+        List<ParticipationRequest> requests = requestRepository.findByEvent(eventId);
 
         return requests.stream()
                 .map(participationRequestMapper::toDto)
@@ -116,16 +118,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     @Transactional
     public UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, UpdateParticipationRequestDto updateDto) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-
-        if (!event.getInitiator().equals(userId)) {
-            throw new ForbiddenException("User is not the initiator of the event");
-        }
+        EventFullDto eventFullDto = publicEventFeignClient.getEventFullDto(eventId, userId);
 
         List<Long> requestIds = updateDto.getRequestsId();
         if (requestIds == null || requestIds.isEmpty()) {
-            List<ParticipationRequest> pendingRequests = requestRepository.findByEventIdAndStatus(eventId, RequestStatus.PENDING);
+            List<ParticipationRequest> pendingRequests = requestRepository.findByEventAndStatus(eventId, RequestStatus.PENDING);
             if (pendingRequests.isEmpty()) {
                 throw new ConflictException("No pending requests found for this event");
             }
@@ -141,7 +138,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         for (ParticipationRequest request : requests) {
-            if (!request.getEvent().getId().equals(eventId)) {
+            if (!request.getEvent().equals(eventId)) {
                 throw new ForbiddenException("Request with id=" + request.getId() + " does not belong to this event");
             }
 
@@ -153,8 +150,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         RequestStatus newStatus = updateDto.getStatus();
 
         if (newStatus == RequestStatus.CONFIRMED) {
-            long currentConfirmed = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-            long limit = event.getParticipantLimit() == null ? 0 : event.getParticipantLimit();
+            long currentConfirmed = requestRepository.countByEventAndStatus(eventId, RequestStatus.CONFIRMED);
+            long limit = eventFullDto.getParticipantLimit() == null ? 0 : eventFullDto.getParticipantLimit();
             if (limit == 0) {
                 requests.forEach(r -> r.setStatus(RequestStatus.CONFIRMED));
             } else {
@@ -180,7 +177,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             requests.forEach(r -> r.setStatus(newStatus));
         }
         List<ParticipationRequest> updatedRequests = requestRepository.saveAll(requests);
-        updateEventConfirmedRequests(event);
+        updateEventConfirmedRequests(eventId);
         UpdateParticipationRequestListDto result = new UpdateParticipationRequestListDto();
 
         for (ParticipationRequest request : updatedRequests) {
@@ -194,10 +191,10 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         return result;
     }
 
-    private void updateEventConfirmedRequests(Event event) {
-        Long confirmedCount = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
-        event.setConfirmedRequests(confirmedCount);
-        eventRepository.save(event);
-        log.info("Updated confirmedRequests to {} for event {}", confirmedCount, event.getId());
+    private void updateEventConfirmedRequests(Long eventId) {
+        Long confirmedCount = requestRepository.countByEventAndStatus(eventId, RequestStatus.CONFIRMED);
+        adminEventFeignClient.setConfirmedRequests(eventId, confirmedCount);
+        log.info("Updated confirmedRequests to {} for event {}", confirmedCount, eventId);
     }
+
 }

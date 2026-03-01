@@ -361,6 +361,27 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public EventFullDto getEventFullDto(Long eventId, Long userId) {
+        Event event = eventRepository.findByIdAndPublishedOnIsNotNull(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+
+        if (!event.getInitiator().equals(userId)) {
+            throw new ForbiddenException("User is not the initiator of the event");
+        }
+
+        UserDto user = adminUserFeignClient.getUser(userId);
+        return eventMapper.toEventFullDto(event, user);
+    }
+
+    @Override
+    public void setConfirmedRequests(Long eventId, Long count) {
+        Event event = eventRepository.findByIdAndPublishedOnIsNotNull(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+        event.setConfirmedRequests(count);
+        eventRepository.save(event);
+    }
+
     private void updateEventFieldsFromUserDto(Event event, UpdateEventUserDto dto) {
         if (dto.getAnnotation() != null) {
             event.setAnnotation(dto.getAnnotation());
@@ -557,4 +578,5 @@ public class EventServiceImpl implements EventService {
     private String getClientIp(HttpServletRequest request) {
         return request.getRemoteAddr();
     }
+
 }

@@ -28,4 +28,8 @@ public interface EventService {
 
     List<EventFullDto> getTopEvent(int count);
 
+    EventFullDto getEventFullDto(Long id, Long userId);
+
+    void setConfirmedRequests(Long eventId, Long count);
+
 }

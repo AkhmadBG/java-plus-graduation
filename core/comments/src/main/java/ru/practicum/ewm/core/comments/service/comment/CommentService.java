@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.main.service.comment;
+package ru.practicum.ewm.core.comments.service.comment;
 
 import ru.practicum.ewm.core.interaction.dto.comment.CommentDto;
 import ru.practicum.ewm.core.interaction.dto.comment.CreateCommentDto;

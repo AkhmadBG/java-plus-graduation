@@ -1,10 +1,10 @@
-package ru.practicum.ewm.core.main.mapper;
+package ru.practicum.ewm.core.requests.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
-import ru.practicum.ewm.core.main.entity.ParticipationRequest;
 import ru.practicum.ewm.core.interaction.util.DateFormatter;
+import ru.practicum.ewm.core.requests.entity.ParticipationRequest;
 
 @Mapper(componentModel = "spring")
 public interface ParticipationRequestMapper {

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.main.repository;
+package ru.practicum.ewm.core.comments.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

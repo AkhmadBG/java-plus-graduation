@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.main.mapper;
+package ru.practicum.ewm.core.comments.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

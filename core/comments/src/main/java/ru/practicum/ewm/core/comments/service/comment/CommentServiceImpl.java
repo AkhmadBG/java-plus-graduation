@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.main.service.comment;
+package ru.practicum.ewm.core.comments.service.comment;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

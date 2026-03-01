@@ -45,4 +45,9 @@ public class PublicEventController implements PublicEventOperations {
         return eventService.getEvent(id, request);
     }
 
+    @GetMapping("/event/info/{eventId}")
+    public EventFullDto getEventFullDto(@PathVariable Long eventId, Long userId) {
+        return eventService.getEventFullDto(eventId, userId);
+    }
+
 }

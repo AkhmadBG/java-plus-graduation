@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.main.controller.priv;
+package ru.practicum.ewm.core.requests.controller.priv;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -8,8 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.core.interaction.apiinterface.priv.PrivateRequestOperations;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
-import ru.practicum.ewm.core.main.mapper.ParticipationRequestMapper;
-import ru.practicum.ewm.core.main.service.request.ParticipationRequestService;
+import ru.practicum.ewm.core.requests.mapper.ParticipationRequestMapper;
+import ru.practicum.ewm.core.requests.service.request.ParticipationRequestService;
 
 import java.util.List;
 
