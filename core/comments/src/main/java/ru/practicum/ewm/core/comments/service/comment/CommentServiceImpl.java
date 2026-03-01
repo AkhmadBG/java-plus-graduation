@@ -7,17 +7,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.core.comments.entity.Comment;
+import ru.practicum.ewm.core.comments.mapper.CommentMapper;
+import ru.practicum.ewm.core.comments.repository.CommentRepository;
 import ru.practicum.ewm.core.interaction.dto.comment.CommentDto;
 import ru.practicum.ewm.core.interaction.dto.comment.CreateCommentDto;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.dto.user.UserDto;
 import ru.practicum.ewm.core.interaction.exceptions.CommentNotExistException;
 import ru.practicum.ewm.core.interaction.exceptions.NotFoundException;
-import ru.practicum.ewm.core.main.entity.Comment;
-import ru.practicum.ewm.core.main.entity.Event;
 import ru.practicum.ewm.core.interaction.feignclient.adm.AdminUserFeignClient;
-import ru.practicum.ewm.core.main.mapper.CommentMapper;
-import ru.practicum.ewm.core.main.repository.CommentRepository;
-import ru.practicum.ewm.core.main.repository.EventRepository;
+import ru.practicum.ewm.core.interaction.feignclient.pub.PublicEventFeignClient;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,14 +29,14 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final EventRepository eventRepository;
+    private final PublicEventFeignClient publicEventFeignClient;
     private final AdminUserFeignClient adminUserFeignClient;
     private final CommentMapper commentMapper;
 
     @Override
     public List<CommentDto> getEventComments(Long eventId, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size, Sort.by("id").descending());
-        Page<Comment> comments = commentRepository.findAllByEventId(eventId, pageable);
+        Page<Comment> comments = commentRepository.findAllByEvent(eventId, pageable);
 
         Set<Long> ownerIds = comments.stream()
                 .map(Comment::getOwner)
@@ -56,15 +56,13 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto create(Long eventId, Long userId, CreateCommentDto createCommentDto) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new CommentNotExistException("Not possible create Comment - " +
-                        "Does not exist Event with Id " + eventId));
+        publicEventFeignClient.eventExists(eventId);
 
         UserDto user = adminUserFeignClient.getUser(userId);
 
         Comment commentFromDto = commentMapper.toComment(createCommentDto);
 
-        commentFromDto.setEvent(event);
+        commentFromDto.setEvent(eventId);
         commentFromDto.setOwner(userId);
         commentFromDto.setCreated(LocalDateTime.now());
 
@@ -116,6 +114,16 @@ public class CommentServiceImpl implements CommentService {
         UserDto user = adminUserFeignClient.getUser(comment.getOwner());
 
         return commentMapper.toCommentDto(comment, user.getName());
+    }
+
+    @Override
+    public List<EventFullDto> getTopEvent(Long count) {
+        return publicEventFeignClient.getTopEvents(count);
+    }
+
+    @Override
+    public List<Long> getTopEventIdList(Long count) {
+        return commentRepository.getTopEventIdList(count);
     }
 
 }

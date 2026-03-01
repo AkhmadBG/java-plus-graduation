@@ -16,9 +16,12 @@ public interface PublicCommentOperations {
                                              @RequestParam(defaultValue = "10") int size);
 
     @GetMapping("/comments/top")
-    List<EventFullDto> getTopEvents(@RequestParam(name = "count", defaultValue = "5") int count);
+    List<EventFullDto> getTopEvents(@RequestParam(name = "count", defaultValue = "5") Long count);
 
     @GetMapping("/comments/{commentId}")
     CommentDto getCommentById(@PathVariable(name = "commentId") Long commentId);
+
+    @GetMapping("/top/{count}")
+    List<Long> getTopEventIdList(@PathVariable Long count);
 
 }

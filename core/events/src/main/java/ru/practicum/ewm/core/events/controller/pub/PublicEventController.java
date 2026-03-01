@@ -1,0 +1,63 @@
+package ru.practicum.ewm.core.events.controller.pub;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.core.events.service.event.EventService;
+import ru.practicum.ewm.core.interaction.apiinterface.pub.PublicEventOperations;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
+import ru.practicum.ewm.core.interaction.dto.event.PublicEventSearchRequest;
+import ru.practicum.ewm.core.interaction.enums.SortValue;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/events")
+@RequiredArgsConstructor
+@Validated
+public class PublicEventController implements PublicEventOperations {
+
+    private final EventService eventService;
+
+    @GetMapping
+    public List<EventFullDto> getEvents(
+            @RequestParam(name = "text", required = false) String text,
+            @RequestParam(name = "categories", required = false) List<Long> categories,
+            @RequestParam(name = "paid", required = false) Boolean paid,
+            @RequestParam(name = "rangeStart", required = false) String rangeStart,
+            @RequestParam(name = "rangeEnd", required = false) String rangeEnd,
+            @RequestParam(name = "onlyAvailable", required = false) Boolean onlyAvailable,
+            @RequestParam(name = "sort", required = false) SortValue sort,
+            @RequestParam(name = "from", required = false, defaultValue = "0") Integer from,
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
+            HttpServletRequest request) {
+
+        PublicEventSearchRequest searchRequest = PublicEventSearchRequest.fromParams(
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+
+        return eventService.getEventsWithParamsByUser(searchRequest, request);
+    }
+
+    @GetMapping("/{id}")
+    public EventFullDto getEvent(@PathVariable Long id,
+                                 HttpServletRequest request) {
+        return eventService.getEvent(id, request);
+    }
+
+    @GetMapping("/event/info/{eventId}")
+    public EventFullDto getEventFullDto(@PathVariable Long eventId, Long userId) {
+        return eventService.getEventFullDto(eventId, userId);
+    }
+
+    @GetMapping("/{eventId}/exists")
+    public Boolean eventExists(@PathVariable Long eventId) {
+        return eventService.eventExists(eventId);
+    }
+
+    @GetMapping("/comments/top")
+    public List<EventFullDto> getTopEvents(@RequestParam(name = "count", defaultValue = "5") Long count) {
+        return eventService.getTopEvent(count);
+    }
+
+}

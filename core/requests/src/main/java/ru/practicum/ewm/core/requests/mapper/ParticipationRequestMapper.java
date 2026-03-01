@@ -11,7 +11,6 @@ public interface ParticipationRequestMapper {
 
     @Mapping(target = "created", expression = "java(formatDate(request.getCreated()))")
     @Mapping(target = "requester", source = "requester")
-    @Mapping(target = "event", source = "event.id")
     ParticipationRequestDto toDto(ParticipationRequest request);
 
     default String formatDate(java.time.LocalDateTime dateTime) {

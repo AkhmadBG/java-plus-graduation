@@ -15,7 +15,6 @@
 
     <modules>
         <module>main-service</module>
-        <module>categories</module>
         <module>events</module>
         <module>requests</module>
         <module>users</module>

@@ -7,6 +7,7 @@ import ru.practicum.ewm.core.requests.entity.ParticipationRequest;
 import java.util.List;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
+
     List<ParticipationRequest> findByRequester(Long userId);
 
     Boolean existsByRequesterAndEvent(Long requesterId, Long eventId);
@@ -18,4 +19,5 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     Long countByEventAndStatus(Long eventId, RequestStatus status);
 
     List<ParticipationRequest> findByEvent(Long eventId);
+
 }

@@ -21,9 +21,8 @@ public class Comment {
     @Column(length = 1000, nullable = false)
     private String text;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
-    private Event event;
+    @Column(name = "event_id", nullable = false)
+    private Long event;
 
     @Column(name = "owner_id", nullable = false)
     private Long owner;

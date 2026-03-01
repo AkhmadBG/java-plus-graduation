@@ -30,4 +30,10 @@ public interface PublicEventOperations {
     @GetMapping("/event/info/{eventId}")
     EventFullDto getEventFullDto(@PathVariable Long eventId, Long userId);
 
+    @GetMapping("/{eventId}/exists")
+    Boolean eventExists(@PathVariable Long eventId);
+
+    @GetMapping("/comments/top")
+    List<EventFullDto> getTopEvents(@RequestParam(name = "count", defaultValue = "5") Long count);
+
 }

@@ -2,6 +2,7 @@ package ru.practicum.ewm.core.comments.service.comment;
 
 import ru.practicum.ewm.core.interaction.dto.comment.CommentDto;
 import ru.practicum.ewm.core.interaction.dto.comment.CreateCommentDto;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 
 import java.util.List;
 
@@ -18,5 +19,9 @@ public interface CommentService {
     List<CommentDto> findCommentByText(String text);
 
     CommentDto getCommentById(Long commentId);
+
+    List<EventFullDto> getTopEvent(Long count);
+
+    List<Long> getTopEventIdList(Long countId);
 
 }
