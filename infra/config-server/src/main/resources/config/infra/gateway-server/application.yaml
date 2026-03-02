@@ -6,30 +6,52 @@ spring:
     gateway:
       routes:
 
+        # ===================== STATS =====================
         - id: stats-service
           uri: lb://stats-server
           predicates:
             - Path=/hit/**,/stats/**
 
-        - id: requests
-          uri: lb://requests
-          predicates:
-            - Path=/users/*/requests/**
 
-        - id: comments
+        # ===================== COMMENTS =====================
+        - id: comments-service
           uri: lb://comments
           predicates:
-            - Path=/events/*/comments/**,/comments/**,/comments/top
+            - Path=
+              /comments/**,
+              /*/events/*/comments/**,
+              /*/comments/**,
+              /top/**
 
-        - id: users
+
+        # ===================== REQUESTS =====================
+        - id: requests-service
+          uri: lb://requests
+          predicates:
+            - Path=
+              /users/*/requests/**,
+              /users/*/events/*/requests/**
+
+
+        # ===================== USERS =====================
+        - id: users-service
           uri: lb://users
           predicates:
-            - Path=/admin/users/**,/users/**
+            - Path=/admin/users/**
 
-        - id: events
+
+        # ===================== EVENTS =====================
+        - id: events-service
           uri: lb://events
           predicates:
-            - Path=/admin/events/**,/events/**,/categories/**,/compilations/**
+            - Path=
+              /admin/events/**,
+              /events/**,
+              /admin/compilations/**,
+              /compilations/**,
+              /admin/categories/**,
+              /categories/**,
+              /users/*/events/**
 
 logging:
   level:
