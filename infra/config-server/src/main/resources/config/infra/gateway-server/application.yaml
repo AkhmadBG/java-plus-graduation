@@ -30,7 +30,6 @@ spring:
           predicates:
             - Path=
               /users/*/requests/**,
-              /users/*/events/*/requests/**
 
 
         # ===================== USERS =====================
@@ -51,7 +50,8 @@ spring:
               /compilations/**,
               /admin/categories/**,
               /categories/**,
-              /users/*/events/**
+              /users/*/events/**,
+              /users/*/events/*/requests/**
 
 logging:
   level:

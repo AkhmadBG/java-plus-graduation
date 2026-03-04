@@ -42,4 +42,10 @@ public class PrivateRequestController implements PrivateRequestOperations {
         return participationRequestMapper.toDto(service.cancelRequest(userId, requestId));
     }
 
+    @GetMapping("/events/{eventId}/requests")
+    public List<ParticipationRequestDto> getRequestsByEventId(@PathVariable("userId") @NotNull @Positive Long userId,
+                                                              @PathVariable("userId") @NotNull @Positive Long eventId) {
+        return service.getRequestsByEventId(userId, eventId);
+    }
+
 }

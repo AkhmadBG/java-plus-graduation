@@ -46,8 +46,13 @@ public class PublicEventController implements PublicEventOperations {
     }
 
     @GetMapping("/event/info/{eventId}")
-    public EventFullDto getEventFullDto(@PathVariable Long eventId, Long userId) {
+    public EventFullDto getEventFullDto(@PathVariable Long eventId, @RequestParam Long userId) {
         return eventService.getEventFullDto(eventId, userId);
+    }
+
+    @GetMapping("/event/{eventId}/info/{userId}")
+    public EventFullDto getEventFullDtoForRequest(@PathVariable Long eventId, @PathVariable Long userId) {
+        return eventService.getEventFullDtoForRequest(eventId, userId);
     }
 
     @GetMapping("/{eventId}/exists")
@@ -58,6 +63,11 @@ public class PublicEventController implements PublicEventOperations {
     @GetMapping("/comments/top")
     public List<EventFullDto> getTopEvents(@RequestParam(name = "count", defaultValue = "5") Long count) {
         return eventService.getTopEvent(count);
+    }
+
+    @PostMapping()
+    public void saveEvent(@RequestBody EventFullDto eventFullDto) {
+        eventService.saveEvent(eventFullDto);
     }
 
 }

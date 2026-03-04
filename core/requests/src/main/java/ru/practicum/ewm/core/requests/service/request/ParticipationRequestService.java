@@ -19,4 +19,6 @@ public interface ParticipationRequestService {
 
     UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, UpdateParticipationRequestDto updateParticipationRequestDto);
 
+    List<ParticipationRequestDto> getRequestsByEventId(Long userId, Long eventId);
+
 }

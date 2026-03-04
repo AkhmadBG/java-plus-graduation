@@ -55,10 +55,9 @@ public class PrivateEventController implements PrivateEventOperations {
     }
 
     @PatchMapping("/{userId}/events/{eventId}/requests")
-    public UpdateParticipationRequestListDto updateUserRequestsByEventId(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @Valid @RequestBody UpdateParticipationRequestDto updateParticipationRequestDto) {
+    public UpdateParticipationRequestListDto updateUserRequestsByEventId(@PathVariable Long userId,
+                                                                         @PathVariable Long eventId,
+                                                                         @Valid @RequestBody UpdateParticipationRequestDto updateParticipationRequestDto) {
 
         log.info("Received update request: userId={}, eventId={}, dto={}",
                 userId, eventId, updateParticipationRequestDto.toString());

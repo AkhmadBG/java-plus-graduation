@@ -1,9 +1,7 @@
 package ru.practicum.ewm.core.interaction.apiinterface.pub;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.enums.SortValue;
 
@@ -28,12 +26,18 @@ public interface PublicEventOperations {
     EventFullDto getEvent(@PathVariable Long id, HttpServletRequest request);
 
     @GetMapping("/event/info/{eventId}")
-    EventFullDto getEventFullDto(@PathVariable Long eventId, Long userId);
+    EventFullDto getEventFullDto(@PathVariable Long eventId, @RequestParam Long userId);
+
+    @GetMapping("/event/{eventId}/info/{userId}")
+    EventFullDto getEventFullDtoForRequest(@PathVariable Long eventId, @PathVariable Long userId);
 
     @GetMapping("/{eventId}/exists")
     Boolean eventExists(@PathVariable Long eventId);
 
     @GetMapping("/comments/top")
     List<EventFullDto> getTopEvents(@RequestParam(name = "count", defaultValue = "5") Long count);
+
+    @PostMapping()
+    void saveEvent(@RequestBody EventFullDto eventFullDto);
 
 }

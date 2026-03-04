@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
 
-    List<ParticipationRequest> findByRequester(Long userId);
+    List<ParticipationRequest> findAllByRequester(Long userId);
 
     Boolean existsByRequesterAndEvent(Long requesterId, Long eventId);
 

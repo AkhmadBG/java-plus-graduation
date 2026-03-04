@@ -75,7 +75,6 @@ public class EventServiceImpl implements EventService {
 
         Event event = eventMapper.toEvent(newEventDto, category, userId, newEventDto.getLocation());
         Event savedEvent = eventRepository.save(event);
-
         return eventMapper.toEventFullDto(savedEvent, user);
     }
 
@@ -248,7 +247,8 @@ public class EventServiceImpl implements EventService {
 
         events.forEach(event -> eventIdsUserIds.put(event.getId(), event.getInitiator()));
 
-        List<UserDto> users = adminUserFeignClient.getUsersByIds((ArrayList<Long>) eventIdsUserIds.values());
+//        List<UserDto> users = adminUserFeignClient.getUsersByIds((ArrayList<Long>) eventIdsUserIds.values());
+        List<UserDto> users = adminUserFeignClient.getUsersByIds(eventIdsUserIds.values().stream().toList());
 
         Map<Long, UserDto> eventIdsUserDto = new HashMap<>();
 
@@ -376,11 +376,28 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findByIdAndPublishedOnIsNotNull(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
+        System.out.println(event.getInitiator());
+        System.out.println(userId);
+
         if (!event.getInitiator().equals(userId)) {
-            throw new ForbiddenException("User is not the initiator of the event");
+            throw new ForbiddenException("User is not the initiator of the event" + event.getInitiator() + userId);
         }
 
         UserDto user = adminUserFeignClient.getUser(userId);
+        return eventMapper.toEventFullDto(event, user);
+    }
+
+    @Override
+    public EventFullDto getEventFullDtoForRequest(Long eventId, Long userId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+
+        UserDto user = adminUserFeignClient.getUser(userId);
+
+        if (event.getPublishedOn() == null) {
+            throw new ConflictException("Event is not published");
+        }
+
         return eventMapper.toEventFullDto(event, user);
     }
 
@@ -399,12 +416,24 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<ParticipationRequestDto> getUserRequestsByEventId(Long userId, Long eventId) {
-        return List.of();
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+
+        if (!event.getInitiator().equals(userId)) {
+            throw new ForbiddenException("User is not the initiator of the event");
+        }
+
+        return privateRequestFeignClient.getRequestsByEventId(userId, eventId);
     }
 
     @Override
     public UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, UpdateParticipationRequestDto updateParticipationRequestDto) {
         return null;
+    }
+
+    @Override
+    public void saveEvent(EventFullDto eventFullDto) {
+        eventRepository.save(eventMapper.toEvent(eventFullDto));
     }
 
     private void updateEventFieldsFromUserDto(Event event, UpdateEventUserDto dto) {
@@ -516,8 +545,12 @@ public class EventServiceImpl implements EventService {
             predicates.add(categoryFilter);
         }
 
+//        if (hasUsers(request.getUsers())) {
+//            Predicate userFilter = root.get("initiator").get("id").in(request.getUsers());
+//            predicates.add(userFilter);
+//        }
         if (hasUsers(request.getUsers())) {
-            Predicate userFilter = root.get("initiator").get("id").in(request.getUsers());
+            Predicate userFilter = root.get("initiator").in(request.getUsers());
             predicates.add(userFilter);
         }
 

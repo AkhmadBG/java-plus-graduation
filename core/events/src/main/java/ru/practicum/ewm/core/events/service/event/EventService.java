@@ -33,6 +33,8 @@ public interface EventService {
 
     EventFullDto getEventFullDto(Long id, Long userId);
 
+    EventFullDto getEventFullDtoForRequest(Long eventId, Long userId);
+
     void setConfirmedRequests(Long eventId, Long count);
 
     Boolean eventExists(Long eventId);
@@ -40,5 +42,7 @@ public interface EventService {
     List<ParticipationRequestDto> getUserRequestsByEventId(Long userId, Long eventId);
 
     UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, @Valid UpdateParticipationRequestDto updateParticipationRequestDto);
+
+    void saveEvent(EventFullDto eventFullDto);
 
 }
