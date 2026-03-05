@@ -1,9 +1,51 @@
+#spring:
+#  application:
+#    name: events
+#
+#  config:
+#    import: "configserver:"
+#  cloud:
+#    config:
+#      fail-fast: true
+#      retry:
+#        useRandomPolicy: true
+#        max-interval: 6000
+#      discovery:
+#        enabled: true
+#        serviceId: config-server
+#
+#stats:
+#  server:
+#    url: http://localhost:9090
+#
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
+#  instance:
+#    preferIpAddress: true
+#    hostname: localhost
+#    instance-id: "${spring.application.name}:${random.value}"
+#    leaseRenewalIntervalInSeconds: 10
+#
+#logging:
+#  level:
+#    root: INFO
+#    level:
+#      org:
+#        hibernate:
+#          SQL: DEBUG
+#          orm:
+#            jdbc:
+#              bind: TRACE
+
 spring:
   application:
     name: events
 
   config:
     import: "configserver:"
+
   cloud:
     config:
       fail-fast: true
@@ -27,3 +69,9 @@ eureka:
     hostname: localhost
     instance-id: "${spring.application.name}:${random.value}"
     leaseRenewalIntervalInSeconds: 10
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

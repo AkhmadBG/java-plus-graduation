@@ -140,6 +140,8 @@ public interface EventMapper {
     @Mapping(target = "publishedOn", expression = "java(parse(dto.getPublishedOn()))")
     @Mapping(target = "state", expression = "java(mapState(dto.getState()))")
     @Mapping(target = "initiator", expression = "java(dto.getInitiator() != null ? dto.getInitiator().getId() : dto.getInitiatorId())")
+    @Mapping(target = "confirmedRequests", source = "confirmedRequests")
+    @Mapping(target = "views", source = "views")
     Event toEvent(EventFullDto dto);
 
     default LocalDateTime parse(String value) {

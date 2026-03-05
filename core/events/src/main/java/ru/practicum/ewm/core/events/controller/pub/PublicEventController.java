@@ -65,8 +65,9 @@ public class PublicEventController implements PublicEventOperations {
         return eventService.getTopEvent(count);
     }
 
-    @PostMapping()
+    @PostMapping("/event/save")
     public void saveEvent(@RequestBody EventFullDto eventFullDto) {
+        System.out.println("eventFullDto.getConfirmedRequests() в event контроллере " + eventFullDto.getConfirmedRequests());
         eventService.saveEvent(eventFullDto);
     }
 

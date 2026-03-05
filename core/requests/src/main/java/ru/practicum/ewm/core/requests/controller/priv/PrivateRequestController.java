@@ -44,7 +44,7 @@ public class PrivateRequestController implements PrivateRequestOperations {
 
     @GetMapping("/events/{eventId}/requests")
     public List<ParticipationRequestDto> getRequestsByEventId(@PathVariable("userId") @NotNull @Positive Long userId,
-                                                              @PathVariable("userId") @NotNull @Positive Long eventId) {
+                                                              @PathVariable("eventId") @NotNull @Positive Long eventId) {
         return service.getRequestsByEventId(userId, eventId);
     }
 

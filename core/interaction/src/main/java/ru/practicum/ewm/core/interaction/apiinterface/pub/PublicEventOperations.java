@@ -37,7 +37,7 @@ public interface PublicEventOperations {
     @GetMapping("/comments/top")
     List<EventFullDto> getTopEvents(@RequestParam(name = "count", defaultValue = "5") Long count);
 
-    @PostMapping()
+    @PostMapping("/event/save")
     void saveEvent(@RequestBody EventFullDto eventFullDto);
 
 }

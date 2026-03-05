@@ -1,5 +1,6 @@
 package ru.practicum.ewm.core.requests.service.request;
 
+import feign.FeignException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +33,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     private final AdminEventFeignClient adminEventFeignClient;
     private final PublicEventFeignClient publicEventFeignClient;
-
     private final AdminUserFeignClient adminUserFeignClient;
-
     private final ParticipationRequestRepository requestRepository;
     private final ParticipationRequestMapper participationRequestMapper;
 
@@ -55,15 +54,28 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new CommentNotExistException("Not possible create Comment - " + "Does not exist User with Id " + userId);
         }
 
-        EventFullDto eventFullDto = publicEventFeignClient.getEventFullDtoForRequest(eventId, userId);
+        EventFullDto eventFullDto;
 
-//        System.out.println("eventFullDto.getInitiator().getId() = " + eventFullDto.getInitiator().getId());
-//        System.out.println("eventFullDto.getInitiator().getName() = " + eventFullDto.getInitiator().getName());
-//        System.out.println("userId = " + userId);
+        try {
+            eventFullDto = publicEventFeignClient.getEventFullDtoForRequest(eventId, userId);
+        } catch (FeignException.Conflict e) {
+            throw new ConflictException("Event is not published");
+        }
 
-//        if (eventFullDto.getInitiator().getId().equals(userId)) {
-//            throw new ConflictException("Initiator cannot request own event");
-//        }
+        long confirmedCount =
+                requestRepository.countByEventAndStatus(eventId, RequestStatus.CONFIRMED);
+
+        if (eventFullDto.getParticipantLimit() > 0 &&
+                confirmedCount >= eventFullDto.getParticipantLimit()) {
+            throw new ConflictException("Participant limit reached");
+        }
+
+//        System.out.println("eventFullDto.getInitiator().getId()" + eventFullDto.getInitiator().getId());
+//        System.out.println("userId" + userId);
+
+        if (eventFullDto.getInitiator().getId().equals(userId)) {
+            throw new ConflictException("Initiator cannot request own event");
+        }
 
         if (EventState.valueOf(eventFullDto.getState()) != EventState.PUBLISHED) {
             throw new ConflictException("Event is not published");
@@ -73,22 +85,18 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ConflictException("Request already exists");
         }
 
-        System.out.println("eventFullDto.getParticipantLimit() " + eventFullDto.getParticipantLimit());
-        System.out.println("eventFullDto.getConfirmedRequests() " + eventFullDto.getConfirmedRequests());
-        System.out.println("eventFullDto.getParticipantLimit() " + eventFullDto.getParticipantLimit());
-        if (eventFullDto.getParticipantLimit() > 0 && eventFullDto.getConfirmedRequests() >= eventFullDto.getParticipantLimit()) {
-            throw new ConflictException("Participant limit reached");
-        }
-
         ParticipationRequest request = new ParticipationRequest();
         request.setRequester(userId);
         request.setEvent(eventId);
         request.setCreated(LocalDateTime.now());
+
         if (eventFullDto.getRequestModeration() && eventFullDto.getParticipantLimit() != 0) {
             request.setStatus(RequestStatus.PENDING);
         } else {
             request.setStatus(RequestStatus.CONFIRMED);
+//            ParticipationRequest saveRequest = requestRepository.save(request);
             eventFullDto.setConfirmedRequests(eventFullDto.getConfirmedRequests() + 1);
+            System.out.println("в ParticipationRequestServiceImpl eventFullDto.getConfirmedRequests() до отправки на сохранение в БД = " + eventFullDto.getConfirmedRequests());
             publicEventFeignClient.saveEvent(eventFullDto);
         }
 
@@ -171,11 +179,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                     List<ParticipationRequest> toConfirm = requests.stream()
                             .filter(r -> r.getStatus() != RequestStatus.CONFIRMED)
                             .limit(availableSlots)
-                            .collect(Collectors.toList());
+                            .toList();
 
                     List<ParticipationRequest> toReject = requests.stream()
                             .filter(r -> !toConfirm.contains(r))
-                            .collect(Collectors.toList());
+                            .toList();
 
                     toConfirm.forEach(r -> r.setStatus(RequestStatus.CONFIRMED));
                     toReject.forEach(r -> r.setStatus(RequestStatus.REJECTED));
@@ -205,7 +213,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         return requests.stream()
                 .map(participationRequestMapper::toDto)
                 .toList();
-
     }
 
     private void updateEventConfirmedRequests(Long eventId) {

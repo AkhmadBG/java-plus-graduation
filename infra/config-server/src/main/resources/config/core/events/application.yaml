@@ -1,3 +1,32 @@
+#server:
+#  port: 0
+#
+#spring:
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#
+#  sql:
+#    init:
+#      mode: always
+#
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5427/ewm-core-events
+#    username: dbuser
+#    password: 12345
+#
+#logging:
+#  level:
+#    root: INFO
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.orm.jdbc.bind: TRACE
+
 server:
   port: 0
 
@@ -5,18 +34,18 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-      show_sql: true
-      format_sql: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
   sql:
     init:
       mode: always
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5427/ewm-core-events
     username: dbuser
     password: 12345
-
-logging:
-  level:
-    root: INFO

@@ -96,7 +96,7 @@ public class EventServiceImpl implements EventService {
             );
         }
         return eventsPage.getContent().stream()
-                .map(event -> eventMapper.toEventShortDto(event, user))
+                .map(event -> eventMapper.toEventShortDto(event, adminUserFeignClient.getUser(event.getInitiator()))) //TODO вынести в отдельный метод получение листа с userIds
                 .toList();
     }
 
@@ -113,7 +113,7 @@ public class EventServiceImpl implements EventService {
         }
 
         if (updateEventUserDto == null) {
-            return eventMapper.toEventFullDto(event, user);
+            return eventMapper.toEventFullDto(event, adminUserFeignClient.getUser(event.getInitiator()));
         }
 
         updateEventFieldsFromUserDto(event, updateEventUserDto);
@@ -130,7 +130,7 @@ public class EventServiceImpl implements EventService {
         }
 
         Event updatedEvent = eventRepository.save(event);
-        return eventMapper.toEventFullDto(updatedEvent, user);
+        return eventMapper.toEventFullDto(updatedEvent, adminUserFeignClient.getUser(event.getInitiator()));
     }
 
     @Override
@@ -143,7 +143,7 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> viewsMap = statisticsService.getEventsViews(List.of(eventId), null, false);
         event.setViews(viewsMap.getOrDefault(eventId, 0L));
 
-        return eventMapper.toEventFullDto(event, user);
+        return eventMapper.toEventFullDto(event, adminUserFeignClient.getUser(event.getInitiator()));
     }
 
     @Override
@@ -376,14 +376,11 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findByIdAndPublishedOnIsNotNull(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
-        System.out.println(event.getInitiator());
-        System.out.println(userId);
-
         if (!event.getInitiator().equals(userId)) {
             throw new ForbiddenException("User is not the initiator of the event" + event.getInitiator() + userId);
         }
 
-        UserDto user = adminUserFeignClient.getUser(userId);
+        UserDto user = adminUserFeignClient.getUser(event.getInitiator());
         return eventMapper.toEventFullDto(event, user);
     }
 
@@ -392,7 +389,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
-        UserDto user = adminUserFeignClient.getUser(userId);
+        UserDto user = adminUserFeignClient.getUser(event.getInitiator());
 
         if (event.getPublishedOn() == null) {
             throw new ConflictException("Event is not published");
@@ -431,9 +428,26 @@ public class EventServiceImpl implements EventService {
         return null;
     }
 
+    //    @Override
+//    @Transactional
+//    public void saveEvent(EventFullDto eventFullDto) {
+//        System.out.println("в eventServiceImpl eventFullDto.getConfirmedRequests() до сохранения в БД = " + eventFullDto.getConfirmedRequests());
+//        Event event = eventMapper.toEvent(eventFullDto);
+//        System.out.println("confirmedRequests после mapper = " + event.getConfirmedRequests());
+//        Event saveEvent = eventRepository.save(event);
+//        System.out.println("в EventServiceImpl saveEvent.getConfirmedRequests() после сохранения в БД = " + saveEvent.getConfirmedRequests());
+//
+//    }
+    @Transactional
     @Override
     public void saveEvent(EventFullDto eventFullDto) {
-        eventRepository.save(eventMapper.toEvent(eventFullDto));
+        Event event = eventRepository.findById(eventFullDto.getId())
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        event.setConfirmedRequests(eventFullDto.getConfirmedRequests());
+
+        Event save = eventRepository.save(event);
+        System.out.println("в EventServiceImpl save.getConfirmedRequests() после сохранения в БД = " + save.getConfirmedRequests());
     }
 
     private void updateEventFieldsFromUserDto(Event event, UpdateEventUserDto dto) {
