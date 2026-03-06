@@ -21,4 +21,8 @@ public interface ParticipationRequestService {
 
     List<ParticipationRequestDto> getRequestsByEventId(Long userId, Long eventId);
 
+    List<ParticipationRequestDto> getRequestsByIds(List<Long> requestsId);
+
+    void updateRequestsStatus(List<ParticipationRequestDto> requests);
+
 }

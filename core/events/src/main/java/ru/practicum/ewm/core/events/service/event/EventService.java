@@ -1,11 +1,10 @@
 package ru.practicum.ewm.core.events.service.event;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import ru.practicum.ewm.core.events.entity.Event;
 import ru.practicum.ewm.core.interaction.dto.event.*;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
-import ru.practicum.ewm.core.interaction.dto.request.UpdateParticipationRequestDto;
+import ru.practicum.ewm.core.interaction.dto.request.RequestDto;
 
 import java.util.List;
 
@@ -41,7 +40,7 @@ public interface EventService {
 
     List<ParticipationRequestDto> getUserRequestsByEventId(Long userId, Long eventId);
 
-    UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, @Valid UpdateParticipationRequestDto updateParticipationRequestDto);
+    UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, RequestDto updateParticipationRequestDto);
 
     void saveEvent(EventFullDto eventFullDto);
 

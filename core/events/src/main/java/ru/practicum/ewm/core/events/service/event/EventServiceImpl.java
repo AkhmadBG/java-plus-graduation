@@ -22,10 +22,12 @@ import ru.practicum.ewm.core.events.repository.CategoryRepository;
 import ru.practicum.ewm.core.events.repository.EventRepository;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
-import ru.practicum.ewm.core.interaction.dto.request.UpdateParticipationRequestDto;
+import ru.practicum.ewm.core.interaction.dto.request.RequestDto;
 import ru.practicum.ewm.core.interaction.dto.user.UserDto;
+import ru.practicum.ewm.core.interaction.enums.RequestStatus;
 import ru.practicum.ewm.core.interaction.exceptions.*;
 import ru.practicum.ewm.core.interaction.dto.event.*;
+import ru.practicum.ewm.core.interaction.feignclient.adm.AdminRequestFeignClient;
 import ru.practicum.ewm.core.interaction.feignclient.adm.AdminUserFeignClient;
 import ru.practicum.ewm.core.interaction.enums.EventState;
 import ru.practicum.ewm.core.interaction.enums.SortValue;
@@ -52,6 +54,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final StatisticsService statisticsService;
     private final AdminUserFeignClient adminUserFeignClient;
+    private final AdminRequestFeignClient adminRequestFeignClient;
     private final PrivateRequestFeignClient privateRequestFeignClient;
     private final PublicCommentFeignClient publicCommentFeignClient;
     private final EntityManager entityManager;
@@ -250,14 +253,13 @@ public class EventServiceImpl implements EventService {
 //        List<UserDto> users = adminUserFeignClient.getUsersByIds((ArrayList<Long>) eventIdsUserIds.values());
         List<UserDto> users = adminUserFeignClient.getUsersByIds(eventIdsUserIds.values().stream().toList());
 
+        Map<Long, UserDto> usersMap = users.stream()
+                .collect(Collectors.toMap(UserDto::getId, u -> u));
+
         Map<Long, UserDto> eventIdsUserDto = new HashMap<>();
 
-        for (UserDto user : users) {
-            for (Map.Entry<Long, Long> entry : eventIdsUserIds.entrySet()) {
-                if (Objects.equals(entry.getKey(), user.getId())) {
-                    eventIdsUserDto.put(entry.getKey(), user);
-                }
-            }
+        for (Map.Entry<Long, Long> entry : eventIdsUserIds.entrySet()) {
+            eventIdsUserDto.put(entry.getKey(), usersMap.get(entry.getValue()));
         }
 
         List<Long> eventIds = events.stream()
@@ -400,10 +402,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void setConfirmedRequests(Long eventId, Long count) {
+        System.out.println("в EventServiceImpl eventId = " + eventId + "count = " + count);
         Event event = eventRepository.findByIdAndPublishedOnIsNotNull(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         event.setConfirmedRequests(count);
-        eventRepository.save(event);
+        Event saveEvent = eventRepository.save(event);
+        System.out.println("в EventServiceImpl saveEvent.getConfirmedRequests() = " + saveEvent.getConfirmedRequests());
     }
 
     @Override
@@ -424,8 +428,73 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, UpdateParticipationRequestDto updateParticipationRequestDto) {
-        return null;
+    @Transactional
+    public UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId,
+                                                                         Long eventId,
+                                                                         RequestDto dto) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+
+        if (!event.getInitiator().equals(userId)) {
+            throw new ForbiddenException("User is not the initiator of the event");
+        }
+
+        if (event.getParticipantLimit() != 0 &&
+                event.getConfirmedRequests() >= event.getParticipantLimit()) {
+            throw new ConflictException("Participant limit reached");
+        }
+
+        List<ParticipationRequestDto> requests =
+                adminRequestFeignClient.getRequestsByIds(dto.getRequestIds());
+        requests.forEach(request -> System.out.println(request.getStatus()));
+        requests.forEach(request -> System.out.println(request.getRequester()));
+        requests.forEach(request -> System.out.println(request.getCreated()));
+        requests.forEach(request -> System.out.println(request.getId()));
+        requests.forEach(request -> System.out.println(request.getEvent()));
+
+        List<ParticipationRequestDto> confirmed = new ArrayList<>();
+        List<ParticipationRequestDto> rejected = new ArrayList<>();
+
+        long confirmedCount = event.getConfirmedRequests();
+
+        for (ParticipationRequestDto request : requests) {
+
+            if (!request.getStatus().equals(RequestStatus.PENDING)) {
+                throw new ConflictException("Request must be in PENDING status");
+            }
+
+            if (dto.getStatus() == RequestStatus.CONFIRMED) {
+
+                if (event.getParticipantLimit() != 0 &&
+                        confirmedCount >= event.getParticipantLimit()) {
+
+                    request.setStatus(RequestStatus.REJECTED);
+                    rejected.add(request);
+
+                } else {
+
+                    request.setStatus(RequestStatus.CONFIRMED);
+                    confirmed.add(request);
+                    confirmedCount++;
+                }
+
+            } else {
+
+                request.setStatus(RequestStatus.REJECTED);
+                rejected.add(request);
+            }
+        }
+
+        event.setConfirmedRequests(confirmedCount);
+        eventRepository.save(event);
+
+        adminRequestFeignClient.updateRequestsStatus(requests);
+
+        return UpdateParticipationRequestListDto.builder()
+                .confirmedRequests(confirmed)
+                .rejectedRequests(rejected)
+                .build();
     }
 
     //    @Override

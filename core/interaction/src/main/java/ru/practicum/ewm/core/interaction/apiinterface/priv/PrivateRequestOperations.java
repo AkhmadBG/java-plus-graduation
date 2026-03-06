@@ -28,4 +28,6 @@ public interface PrivateRequestOperations {
     List<ParticipationRequestDto> getRequestsByEventId(@PathVariable("userId") @NotNull @Positive Long userId,
                                                        @PathVariable("eventId") @NotNull @Positive Long eventId);
 
+
+
 }

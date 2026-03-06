@@ -24,7 +24,7 @@ public interface AdminEventOperations {
     EventFullDto updateEvent(@PathVariable(name = "eventId") Long eventId,
                                     @Valid @RequestBody UpdateEventAdminDto updateEventAdminDto);
 
-    @PatchMapping("/{eventId}/set/{count}")
+    @PutMapping("/{eventId}/set/{count}")
     void setConfirmedRequests(@PathVariable(name = "eventId") Long eventId,
                                      @PathVariable(name = "count") Long count);
 

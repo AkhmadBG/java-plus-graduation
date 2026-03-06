@@ -42,9 +42,10 @@ public class AdminEventController implements AdminEventOperations {
         return eventService.updateEvent(eventId, updateEventAdminDto);
     }
 
-    @PatchMapping("/{eventId}/set/{count}")
+    @PutMapping("/{eventId}/set/{count}")
     public void setConfirmedRequests(@PathVariable(name = "eventId") Long eventId,
                                     @PathVariable(name = "count") Long count) {
+        System.out.println("в AdminEventController eventId = " + eventId + "count = " + count);
         eventService.setConfirmedRequests(eventId, count);
     }
 

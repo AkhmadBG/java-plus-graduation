@@ -9,6 +9,7 @@ import ru.practicum.ewm.core.events.service.event.EventService;
 import ru.practicum.ewm.core.interaction.apiinterface.priv.PrivateEventOperations;
 import ru.practicum.ewm.core.interaction.dto.event.*;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
+import ru.practicum.ewm.core.interaction.dto.request.RequestDto;
 import ru.practicum.ewm.core.interaction.dto.request.UpdateParticipationRequestDto;
 
 import java.util.List;
@@ -57,7 +58,7 @@ public class PrivateEventController implements PrivateEventOperations {
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public UpdateParticipationRequestListDto updateUserRequestsByEventId(@PathVariable Long userId,
                                                                          @PathVariable Long eventId,
-                                                                         @Valid @RequestBody UpdateParticipationRequestDto updateParticipationRequestDto) {
+                                                                         @Valid @RequestBody RequestDto updateParticipationRequestDto) {
 
         log.info("Received update request: userId={}, eventId={}, dto={}",
                 userId, eventId, updateParticipationRequestDto.toString());

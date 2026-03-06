@@ -48,4 +48,6 @@ public class PrivateRequestController implements PrivateRequestOperations {
         return service.getRequestsByEventId(userId, eventId);
     }
 
+
+
 }

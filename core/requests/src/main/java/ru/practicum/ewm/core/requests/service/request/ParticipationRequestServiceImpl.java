@@ -24,6 +24,7 @@ import ru.practicum.ewm.core.requests.repository.ParticipationRequestRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -70,8 +71,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ConflictException("Participant limit reached");
         }
 
-//        System.out.println("eventFullDto.getInitiator().getId()" + eventFullDto.getInitiator().getId());
-//        System.out.println("userId" + userId);
+        System.out.println("eventFullDto.getInitiator().getId()" + eventFullDto.getInitiator().getId());
+        System.out.println("userId" + userId);
 
         if (eventFullDto.getInitiator().getId().equals(userId)) {
             throw new ConflictException("Initiator cannot request own event");
@@ -90,17 +91,31 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         request.setEvent(eventId);
         request.setCreated(LocalDateTime.now());
 
+//        if (eventFullDto.getRequestModeration() && eventFullDto.getParticipantLimit() != 0) {
+//            request.setStatus(RequestStatus.PENDING);
+//        } else {
+//            System.out.println("в ParticipationRequestServiceImpl в блоке setStatus(RequestStatus.CONFIRMED)");
+//            request.setStatus(RequestStatus.CONFIRMED);
+//            eventFullDto.setConfirmedRequests(eventFullDto.getConfirmedRequests() + 1);
+//            System.out.println("в ParticipationRequestServiceImpl eventFullDto.getConfirmedRequests() до отправки на сохранение в БД = " + eventFullDto.getConfirmedRequests());
+//            updateEventConfirmedRequests(eventFullDto.getId());
+//        }
+//
+//
+//        return requestRepository.save(request);
+
         if (eventFullDto.getRequestModeration() && eventFullDto.getParticipantLimit() != 0) {
             request.setStatus(RequestStatus.PENDING);
         } else {
+            System.out.println("в ParticipationRequestServiceImpl в блоке setStatus(RequestStatus.CONFIRMED)");
             request.setStatus(RequestStatus.CONFIRMED);
-//            ParticipationRequest saveRequest = requestRepository.save(request);
-            eventFullDto.setConfirmedRequests(eventFullDto.getConfirmedRequests() + 1);
-            System.out.println("в ParticipationRequestServiceImpl eventFullDto.getConfirmedRequests() до отправки на сохранение в БД = " + eventFullDto.getConfirmedRequests());
-            publicEventFeignClient.saveEvent(eventFullDto);
         }
 
-        return requestRepository.save(request);
+        ParticipationRequest saved = requestRepository.save(request);
+        System.out.println("в ParticipationRequestServiceImpl eventFullDto.getConfirmedRequests() до отправки на сохранение в БД = " + eventFullDto.getConfirmedRequests());
+        updateEventConfirmedRequests(eventId);
+
+        return saved;
     }
 
     @Transactional
@@ -213,6 +228,37 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         return requests.stream()
                 .map(participationRequestMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public List<ParticipationRequestDto> getRequestsByIds(List<Long> requestsId) {
+
+        List<ParticipationRequest> requests = requestRepository.findAllById(requestsId);
+
+        if (requests.size() != requestsId.size()) {
+            throw new NotFoundException("Some requests were not found");
+        }
+
+        return requests.stream()
+                .map(participationRequestMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public void updateRequestsStatus(List<ParticipationRequestDto> requests) {
+
+        Map<Long, ParticipationRequestDto> dtoMap = requests.stream()
+                .collect(Collectors.toMap(ParticipationRequestDto::getId, r -> r));
+
+        List<ParticipationRequest> entities = requestRepository.findAllById(dtoMap.keySet());
+
+        for (ParticipationRequest entity : entities) {
+            ParticipationRequestDto dto = dtoMap.get(entity.getId());
+            entity.setStatus(dto.getStatus());
+        }
+
+        requestRepository.saveAll(entities);
     }
 
     private void updateEventConfirmedRequests(Long eventId) {
