@@ -1,6 +1,5 @@
 package ru.practicum.ewm.core.interaction.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import ru.practicum.ewm.core.interaction.enums.RequestStatus;
 

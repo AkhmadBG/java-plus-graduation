@@ -10,7 +10,6 @@ import ru.practicum.ewm.core.interaction.apiinterface.priv.PrivateEventOperation
 import ru.practicum.ewm.core.interaction.dto.event.*;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.core.interaction.dto.request.RequestDto;
-import ru.practicum.ewm.core.interaction.dto.request.UpdateParticipationRequestDto;
 
 import java.util.List;
 

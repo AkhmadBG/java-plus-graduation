@@ -17,6 +17,6 @@ public class UpdateParticipationRequestListDto {
     private List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
 
     @Builder.Default
-    private List<ParticipationRequestDto> rejectedRequests =  new ArrayList<>();
+    private List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
 
 }

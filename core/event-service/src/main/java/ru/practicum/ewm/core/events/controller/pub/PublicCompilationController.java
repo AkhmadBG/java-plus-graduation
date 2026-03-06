@@ -23,8 +23,7 @@ public class PublicCompilationController implements PublicCompilationOperations 
 
     @GetMapping("/{compId}")
     public CompilationDto getCompilationById(@PathVariable("compId") Long compId) {
-        CompilationDto compilationDto = compilationService.getCompilationById(compId);
-        return compilationDto;
+        return compilationService.getCompilationById(compId);
     }
 
 }

@@ -30,16 +30,6 @@ public class CompilationServiceImpl implements CompilationService {
     private final AdminUserFeignClient adminUserFeignClient;
     private final CompilationMapper compilationMapper;
 
-//    @Override
-//    public List<CompilationDto> getCompilations(int from, int size) {
-//        Pageable pageable = PageRequest.of(from / size, size, Sort.by("id").descending());
-//        Page<Compilation> compilations = compilationRepository.findAll(pageable);
-//        return compilations.getContent()
-//                .stream()
-//                .map(compilationMapper::toCompilationDto)
-//                .collect(Collectors.toList());
-//    }
-
     @Override
     public List<CompilationDto> getCompilations(int from, int size) {
 

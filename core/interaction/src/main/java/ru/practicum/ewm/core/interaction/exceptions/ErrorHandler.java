@@ -10,7 +10,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -189,18 +188,6 @@ public class ErrorHandler {
         );
     }
 
-//    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ApiError handleTypeMismatch(MethodArgumentTypeMismatchException e) {
-//
-//        return new ApiError(
-//                HttpStatus.BAD_REQUEST,
-//                "Incorrectly made request.",
-//                e.getMessage(),
-//                getStackTrace(e)
-//        );
-//    }
-
     @ExceptionHandler(CategoryNotExistException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleCategoryNotExistException(final CategoryNotExistException e) {
@@ -220,4 +207,5 @@ public class ErrorHandler {
         e.printStackTrace(pw);
         return sw.toString();
     }
+
 }

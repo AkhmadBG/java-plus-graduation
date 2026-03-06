@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
-import ru.practicum.ewm.core.interaction.dto.event.UpdateParticipationRequestListDto;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
-import ru.practicum.ewm.core.interaction.dto.request.UpdateParticipationRequestDto;
 import ru.practicum.ewm.core.interaction.exceptions.CommentNotExistException;
 import ru.practicum.ewm.core.interaction.exceptions.ConflictException;
 import ru.practicum.ewm.core.interaction.exceptions.ForbiddenException;
@@ -71,9 +69,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ConflictException("Participant limit reached");
         }
 
-        System.out.println("eventFullDto.getInitiator().getId()" + eventFullDto.getInitiator().getId());
-        System.out.println("userId" + userId);
-
         if (eventFullDto.getInitiator().getId().equals(userId)) {
             throw new ConflictException("Initiator cannot request own event");
         }
@@ -91,28 +86,13 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         request.setEvent(eventId);
         request.setCreated(LocalDateTime.now());
 
-//        if (eventFullDto.getRequestModeration() && eventFullDto.getParticipantLimit() != 0) {
-//            request.setStatus(RequestStatus.PENDING);
-//        } else {
-//            System.out.println("в ParticipationRequestServiceImpl в блоке setStatus(RequestStatus.CONFIRMED)");
-//            request.setStatus(RequestStatus.CONFIRMED);
-//            eventFullDto.setConfirmedRequests(eventFullDto.getConfirmedRequests() + 1);
-//            System.out.println("в ParticipationRequestServiceImpl eventFullDto.getConfirmedRequests() до отправки на сохранение в БД = " + eventFullDto.getConfirmedRequests());
-//            updateEventConfirmedRequests(eventFullDto.getId());
-//        }
-//
-//
-//        return requestRepository.save(request);
-
         if (eventFullDto.getRequestModeration() && eventFullDto.getParticipantLimit() != 0) {
             request.setStatus(RequestStatus.PENDING);
         } else {
-            System.out.println("в ParticipationRequestServiceImpl в блоке setStatus(RequestStatus.CONFIRMED)");
             request.setStatus(RequestStatus.CONFIRMED);
         }
 
         ParticipationRequest saved = requestRepository.save(request);
-        System.out.println("в ParticipationRequestServiceImpl eventFullDto.getConfirmedRequests() до отправки на сохранение в БД = " + eventFullDto.getConfirmedRequests());
         updateEventConfirmedRequests(eventId);
 
         return saved;
@@ -129,97 +109,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         request.setStatus(RequestStatus.CANCELED);
         return requestRepository.save(request);
-    }
-
-    @Override
-    public List<ParticipationRequestDto> getUserRequestsByEventId(Long userId, Long eventId) {
-        EventFullDto eventFullDto = publicEventFeignClient.getEventFullDto(eventId, userId);
-
-        if (!eventFullDto.getInitiator().getId().equals(userId)) {
-            throw new ForbiddenException("User is not the initiator of the event");
-        }
-
-        List<ParticipationRequest> requests = requestRepository.findByEvent(eventId);
-
-        return requests.stream()
-                .map(participationRequestMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional
-    public UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, UpdateParticipationRequestDto updateDto) {
-        EventFullDto eventFullDto = publicEventFeignClient.getEventFullDto(eventId, userId);
-
-        List<Long> requestIds = updateDto.getRequestsId();
-        if (requestIds == null || requestIds.isEmpty()) {
-            List<ParticipationRequest> pendingRequests = requestRepository.findByEventAndStatus(eventId, RequestStatus.PENDING);
-            if (pendingRequests.isEmpty()) {
-                throw new ConflictException("No pending requests found for this event");
-            }
-            requestIds = pendingRequests.stream()
-                    .map(ParticipationRequest::getId)
-                    .collect(Collectors.toList());
-        }
-
-        List<ParticipationRequest> requests = requestRepository.findAllById(requestIds);
-
-        if (requests.size() != requestIds.size()) {
-            throw new NotFoundException("Some request IDs were not found");
-        }
-
-        for (ParticipationRequest request : requests) {
-            if (!request.getEvent().equals(eventId)) {
-                throw new ForbiddenException("Request with id=" + request.getId() + " does not belong to this event");
-            }
-
-            if (updateDto.getStatus() == RequestStatus.CONFIRMED && request.getStatus() == RequestStatus.CONFIRMED) {
-                throw new ConflictException("Request is already confirmed");
-            }
-        }
-
-        RequestStatus newStatus = updateDto.getStatus();
-
-        if (newStatus == RequestStatus.CONFIRMED) {
-            long currentConfirmed = requestRepository.countByEventAndStatus(eventId, RequestStatus.CONFIRMED);
-            long limit = eventFullDto.getParticipantLimit() == null ? 0 : eventFullDto.getParticipantLimit();
-            if (limit == 0) {
-                requests.forEach(r -> r.setStatus(RequestStatus.CONFIRMED));
-            } else {
-                long availableSlots = limit - currentConfirmed;
-
-                if (availableSlots <= 0) {
-                    requests.forEach(r -> r.setStatus(RequestStatus.REJECTED));
-                } else {
-                    List<ParticipationRequest> toConfirm = requests.stream()
-                            .filter(r -> r.getStatus() != RequestStatus.CONFIRMED)
-                            .limit(availableSlots)
-                            .toList();
-
-                    List<ParticipationRequest> toReject = requests.stream()
-                            .filter(r -> !toConfirm.contains(r))
-                            .toList();
-
-                    toConfirm.forEach(r -> r.setStatus(RequestStatus.CONFIRMED));
-                    toReject.forEach(r -> r.setStatus(RequestStatus.REJECTED));
-                }
-            }
-        } else {
-            requests.forEach(r -> r.setStatus(newStatus));
-        }
-        List<ParticipationRequest> updatedRequests = requestRepository.saveAll(requests);
-        updateEventConfirmedRequests(eventId);
-        UpdateParticipationRequestListDto result = new UpdateParticipationRequestListDto();
-
-        for (ParticipationRequest request : updatedRequests) {
-            if (request.getStatus() == RequestStatus.CONFIRMED) {
-                result.getConfirmedRequests().add(participationRequestMapper.toDto(request));
-            } else if (request.getStatus() == RequestStatus.REJECTED) {
-                result.getRejectedRequests().add(participationRequestMapper.toDto(request));
-            }
-        }
-
-        return result;
     }
 
     @Override

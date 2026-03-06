@@ -12,7 +12,6 @@ import ru.practicum.ewm.core.interaction.dto.user.UserDto;
 import ru.practicum.ewm.core.interaction.dto.user.UserShortDto;
 import ru.practicum.ewm.core.users.service.user.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j

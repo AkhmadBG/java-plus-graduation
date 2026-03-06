@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DateFormatter {
+
     public static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(PATTERN);
 
@@ -14,4 +15,5 @@ public class DateFormatter {
     public static LocalDateTime parse(String dateString) {
         return dateString != null ? LocalDateTime.parse(dateString, FORMATTER) : null;
     }
+
 }

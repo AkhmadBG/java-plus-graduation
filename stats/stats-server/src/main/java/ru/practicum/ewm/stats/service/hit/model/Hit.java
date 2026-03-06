@@ -15,6 +15,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Hit {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,4 +44,5 @@ public class Hit {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
 }

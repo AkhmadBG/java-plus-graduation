@@ -4,7 +4,6 @@ import ru.practicum.ewm.core.interaction.dto.user.NewUserRequest;
 import ru.practicum.ewm.core.interaction.dto.user.UserDto;
 import ru.practicum.ewm.core.interaction.dto.user.UserShortDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface UserService {

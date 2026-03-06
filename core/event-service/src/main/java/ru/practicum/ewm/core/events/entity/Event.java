@@ -5,7 +5,6 @@ import lombok.*;
 import ru.practicum.ewm.core.interaction.enums.EventState;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 @Getter

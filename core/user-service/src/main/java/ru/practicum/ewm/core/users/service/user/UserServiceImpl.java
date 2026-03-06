@@ -15,7 +15,6 @@ import ru.practicum.ewm.core.users.entity.User;
 import ru.practicum.ewm.core.users.mapper.UserMapper;
 import ru.practicum.ewm.core.users.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 

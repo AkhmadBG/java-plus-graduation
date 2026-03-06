@@ -6,7 +6,4 @@ import ru.practicum.ewm.core.events.entity.Compilation;
 
 @Repository
 public interface CompilationRepository extends JpaRepository<Compilation, Long> {
-
-
-
 }

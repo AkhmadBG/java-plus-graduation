@@ -25,4 +25,5 @@ public interface CompilationMapper {
     @Mapping(target = "id", ignore = true)
     void updateCompilationFields(UpdateCompilationRequest updateCompilationRequest,
                                  @MappingTarget Compilation compilation);
+
 }

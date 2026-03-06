@@ -1,18 +1,5 @@
 services:
 
-  main-db:
-    image: postgres:16.1
-    container_name: ewm-main-service-db-container
-    ports:
-      - "5430:5432"
-    environment:
-      - POSTGRES_DB=ewm-main
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=12345
-    volumes:
-      - ewm_main_data:/var/lib/postgresql/data
-    restart: on-failure
-
   comments-db:
     image: postgres:16.1
     container_name: ewm-core-comments-db-container
@@ -80,7 +67,6 @@ services:
 
 volumes:
   ewm_stats_data:
-  ewm_main_data:
   ewm_core_comments_data:
   ewm_core_events_data:
   ewm_core_requests_data:

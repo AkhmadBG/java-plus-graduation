@@ -20,21 +20,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findAllByTextIsLikeIgnoreCase(String text);
 
-//    @Query("""
-//            SELECT c.event FROM Comment c
-//            GROUP BY c.event
-//            ORDER BY COUNT(c) DESC
-//            LIMIT :count
-//            """)
-//    List<Long> getTopEventIdList(@Param("count") Long count);
-
     @Query(value = """
-       SELECT event_id
-       FROM comments
-       GROUP BY event_id
-       ORDER BY COUNT(id) DESC
-       LIMIT :count
-       """, nativeQuery = true)
+            SELECT event_id
+            FROM comments
+            GROUP BY event_id
+            ORDER BY COUNT(id) DESC
+            LIMIT :count
+            """, nativeQuery = true)
     List<Long> getTopEventIdList(@Param("count") Long count);
 
 }

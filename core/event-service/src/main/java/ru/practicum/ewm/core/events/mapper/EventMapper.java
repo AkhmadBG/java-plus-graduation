@@ -36,26 +36,6 @@ public interface EventMapper {
     Event toEvent(NewEventDto newEventDto, Category category, Long initiator,
                   LocationDto location);
 
-//    @BeanMapping(ignoreByDefault = true)
-//    @Mapping(target = "eventDate", expression = "java(formatDate(event.getEventDate()))")
-//    @Mapping(target = "createdOn", expression = "java(formatDate(event.getCreatedOn()))")
-//    @Mapping(target = "publishedOn", expression = "java(formatDate(event.getPublishedOn()))")
-//    @Mapping(target = "state", expression = "java(event.getState().name())")
-//    @Mapping(target = "initiator.id", source = "user.id")
-//    @Mapping(target = "initiator.name", source = "user.name")
-//    @Mapping(target = "id", source = "event.id")
-//    @Mapping(target = "confirmedRequests", expression = "java(event.getConfirmedRequests())")
-//    @Mapping(target = "views", expression = "java(event.getViews())")
-//    @Mapping(target = "paid", expression = "java(event.getPaid())")
-//    @Mapping(target = "participantLimit", source = "event.participantLimit")
-//    @Mapping(target = "title", source = "event.title")
-//    @Mapping(target = "requestModeration", source = "event.requestModeration")
-//    @Mapping(target = "category", source = "event.category")
-//    @Mapping(target = "annotation", source = "event.annotation")
-//    @Mapping(target = "description", source = "event.description")
-//    @Mapping(target = "location", source = "event.location")
-//    EventFullDto toEventFullDto(Event event, UserDto user);
-
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "eventDate", expression = "java(formatDate(event.getEventDate()))")
     @Mapping(target = "createdOn", expression = "java(formatDate(event.getCreatedOn()))")

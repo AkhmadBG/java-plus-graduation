@@ -250,7 +250,6 @@ public class EventServiceImpl implements EventService {
 
         events.forEach(event -> eventIdsUserIds.put(event.getId(), event.getInitiator()));
 
-//        List<UserDto> users = adminUserFeignClient.getUsersByIds((ArrayList<Long>) eventIdsUserIds.values());
         List<UserDto> users = adminUserFeignClient.getUsersByIds(eventIdsUserIds.values().stream().toList());
 
         Map<Long, UserDto> usersMap = users.stream()
@@ -402,12 +401,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void setConfirmedRequests(Long eventId, Long count) {
-        System.out.println("в EventServiceImpl eventId = " + eventId + "count = " + count);
         Event event = eventRepository.findByIdAndPublishedOnIsNotNull(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         event.setConfirmedRequests(count);
         Event saveEvent = eventRepository.save(event);
-        System.out.println("в EventServiceImpl saveEvent.getConfirmedRequests() = " + saveEvent.getConfirmedRequests());
     }
 
     @Override
@@ -447,11 +444,6 @@ public class EventServiceImpl implements EventService {
 
         List<ParticipationRequestDto> requests =
                 adminRequestFeignClient.getRequestsByIds(dto.getRequestIds());
-        requests.forEach(request -> System.out.println(request.getStatus()));
-        requests.forEach(request -> System.out.println(request.getRequester()));
-        requests.forEach(request -> System.out.println(request.getCreated()));
-        requests.forEach(request -> System.out.println(request.getId()));
-        requests.forEach(request -> System.out.println(request.getEvent()));
 
         List<ParticipationRequestDto> confirmed = new ArrayList<>();
         List<ParticipationRequestDto> rejected = new ArrayList<>();
@@ -497,16 +489,6 @@ public class EventServiceImpl implements EventService {
                 .build();
     }
 
-    //    @Override
-//    @Transactional
-//    public void saveEvent(EventFullDto eventFullDto) {
-//        System.out.println("в eventServiceImpl eventFullDto.getConfirmedRequests() до сохранения в БД = " + eventFullDto.getConfirmedRequests());
-//        Event event = eventMapper.toEvent(eventFullDto);
-//        System.out.println("confirmedRequests после mapper = " + event.getConfirmedRequests());
-//        Event saveEvent = eventRepository.save(event);
-//        System.out.println("в EventServiceImpl saveEvent.getConfirmedRequests() после сохранения в БД = " + saveEvent.getConfirmedRequests());
-//
-//    }
     @Transactional
     @Override
     public void saveEvent(EventFullDto eventFullDto) {
@@ -516,7 +498,6 @@ public class EventServiceImpl implements EventService {
         event.setConfirmedRequests(eventFullDto.getConfirmedRequests());
 
         Event save = eventRepository.save(event);
-        System.out.println("в EventServiceImpl save.getConfirmedRequests() после сохранения в БД = " + save.getConfirmedRequests());
     }
 
     private void updateEventFieldsFromUserDto(Event event, UpdateEventUserDto dto) {
@@ -628,10 +609,6 @@ public class EventServiceImpl implements EventService {
             predicates.add(categoryFilter);
         }
 
-//        if (hasUsers(request.getUsers())) {
-//            Predicate userFilter = root.get("initiator").get("id").in(request.getUsers());
-//            predicates.add(userFilter);
-//        }
         if (hasUsers(request.getUsers())) {
             Predicate userFilter = root.get("initiator").in(request.getUsers());
             predicates.add(userFilter);

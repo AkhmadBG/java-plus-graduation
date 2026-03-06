@@ -67,7 +67,6 @@ public class PublicEventController implements PublicEventOperations {
 
     @PostMapping("/event/save")
     public void saveEvent(@RequestBody EventFullDto eventFullDto) {
-        System.out.println("eventFullDto.getConfirmedRequests() в event контроллере " + eventFullDto.getConfirmedRequests());
         eventService.saveEvent(eventFullDto);
     }
 
