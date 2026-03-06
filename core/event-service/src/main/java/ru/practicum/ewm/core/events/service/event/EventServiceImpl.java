@@ -99,7 +99,7 @@ public class EventServiceImpl implements EventService {
             );
         }
         return eventsPage.getContent().stream()
-                .map(event -> eventMapper.toEventShortDto(event, adminUserFeignClient.getUser(event.getInitiator()))) //TODO вынести в отдельный метод получение листа с userIds
+                .map(event -> eventMapper.toEventShortDto(event, adminUserFeignClient.getUser(event.getInitiator())))
                 .toList();
     }
 
