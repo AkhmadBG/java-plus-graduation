@@ -15,7 +15,7 @@ spring:
 
         # ===================== COMMENTS =====================
         - id: comments-service
-          uri: lb://comments
+          uri: lb://comment-service
           predicates:
             - Path=
               /comments/**,
@@ -25,8 +25,8 @@ spring:
 
 
         # ===================== REQUESTS =====================
-        - id: requests-service
-          uri: lb://requests
+        - id: request-service
+          uri: lb://request-service
           predicates:
             - Path=
               /users/*/requests/**,
@@ -34,15 +34,15 @@ spring:
 
 
         # ===================== USERS =====================
-        - id: users-service
-          uri: lb://users
+        - id: user-service
+          uri: lb://user-service
           predicates:
             - Path=/admin/users/**
 
 
         # ===================== EVENTS =====================
-        - id: events-service
-          uri: lb://events
+        - id: event-service
+          uri: lb://event-service
           predicates:
             - Path=
               /admin/events/**,
