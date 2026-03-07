@@ -5,6 +5,7 @@ import ru.practicum.ewm.stats.dto.HitDto;
 import ru.practicum.ewm.stats.service.hit.model.Hit;
 
 public class HitMapper {
+
     public static Hit toHit(CreateHitDto endPointHitCreateDto) {
         return Hit.builder()
                 .app(endPointHitCreateDto.getApp())

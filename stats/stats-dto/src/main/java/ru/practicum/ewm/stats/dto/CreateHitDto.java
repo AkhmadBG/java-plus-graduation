@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateHitDto {
+
     @NotNull
     private String app;
 
@@ -28,4 +29,5 @@ public class CreateHitDto {
     @Past
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
+
 }

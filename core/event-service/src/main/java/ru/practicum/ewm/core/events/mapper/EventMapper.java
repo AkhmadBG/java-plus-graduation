@@ -1,0 +1,137 @@
+package ru.practicum.ewm.core.events.mapper;
+
+import org.mapstruct.*;
+import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
+import ru.practicum.ewm.core.interaction.dto.event.EventShortDto;
+import ru.practicum.ewm.core.interaction.dto.event.LocationDto;
+import ru.practicum.ewm.core.interaction.dto.event.NewEventDto;
+import ru.practicum.ewm.core.interaction.dto.user.UserDto;
+import ru.practicum.ewm.core.interaction.dto.user.UserShortDto;
+import ru.practicum.ewm.core.events.entity.Category;
+import ru.practicum.ewm.core.events.entity.Event;
+import ru.practicum.ewm.core.interaction.enums.EventState;
+import ru.practicum.ewm.core.interaction.util.DateFormatter;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Mapper(componentModel = "spring",
+        uses = {CategoryMapper.class, LocationMapper.class},
+        imports = {LocalDateTime.class, EventState.class})
+public interface EventMapper {
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdOn", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "state", constant = "PENDING")
+    @Mapping(target = "confirmedRequests", constant = "0L")
+    @Mapping(target = "views", constant = "0L")
+    @Mapping(target = "paid", source = "newEventDto.paid", defaultExpression = "java(false)")
+    @Mapping(target = "participantLimit", source = "newEventDto.participantLimit", defaultExpression = "java(0)")
+    @Mapping(target = "requestModeration", source = "newEventDto.requestModeration", defaultExpression = "java(true)")
+    @Mapping(target = "eventDate", expression = "java(parseDate(newEventDto.getEventDate()))")
+    @Mapping(target = "location", source = "location")
+    @Mapping(target = "category", source = "category")
+    @Mapping(target = "publishedOn", ignore = true)
+    @Mapping(target = "initiator", source = "initiator")
+    Event toEvent(NewEventDto newEventDto, Category category, Long initiator,
+                  LocationDto location);
+
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "eventDate", expression = "java(formatDate(event.getEventDate()))")
+    @Mapping(target = "createdOn", expression = "java(formatDate(event.getCreatedOn()))")
+    @Mapping(target = "publishedOn", expression = "java(formatDate(event.getPublishedOn()))")
+    @Mapping(target = "state", expression = "java(event.getState().name())")
+    @Mapping(target = "initiator", expression = "java(mapToUserShortDto(user))")
+    @Mapping(target = "id", source = "event.id")
+    @Mapping(target = "confirmedRequests", expression = "java(event.getConfirmedRequests())")
+    @Mapping(target = "views", expression = "java(event.getViews())")
+    @Mapping(target = "paid", expression = "java(event.getPaid())")
+    @Mapping(target = "participantLimit", source = "event.participantLimit")
+    @Mapping(target = "title", source = "event.title")
+    @Mapping(target = "requestModeration", source = "event.requestModeration")
+    @Mapping(target = "category", source = "event.category")
+    @Mapping(target = "annotation", source = "event.annotation")
+    @Mapping(target = "description", source = "event.description")
+    @Mapping(target = "location", source = "event.location")
+    EventFullDto toEventFullDto(Event event, UserDto user);
+
+    default UserShortDto mapToUserShortDto(UserDto user) {
+        if (user == null) {
+            return null;
+        }
+        return UserShortDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .build();
+    }
+
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "eventDate", expression = "java(formatDate(event.getEventDate()))")
+    @Mapping(target = "initiator", ignore = true)
+    @Mapping(target = "id", source = "event.id")
+    @Mapping(target = "confirmedRequests", expression = "java(event.getConfirmedRequests())")
+    @Mapping(target = "views", expression = "java(event.getViews())")
+    @Mapping(target = "paid", expression = "java(event.getPaid())")
+    @Mapping(target = "title", source = "event.title")
+    @Mapping(target = "category", source = "event.category")
+    @Mapping(target = "annotation", source = "event.annotation")
+    EventShortDto toEventShortDto(Event event, UserDto user);
+
+    @AfterMapping
+    default void setInitiator(@MappingTarget EventShortDto dto, UserDto user) {
+        if (user == null) {
+            return;
+        }
+
+        UserShortDto shortDto = new UserShortDto();
+        shortDto.setId(user.getId());
+        shortDto.setName(user.getName());
+        dto.setInitiator(shortDto);
+    }
+
+    default String formatDate(LocalDateTime dateTime) {
+        return DateFormatter.format(dateTime);
+    }
+
+    default LocalDateTime parseDate(String dateString) {
+        return DateFormatter.parse(dateString);
+    }
+
+    @AfterMapping
+    default void setDefaultValues(@MappingTarget Event.EventBuilder eventBuilder, NewEventDto newEventDto) {
+        if (newEventDto.getPaid() == null) {
+            eventBuilder.paid(false);
+        }
+        if (newEventDto.getParticipantLimit() == null) {
+            eventBuilder.participantLimit(0);
+        }
+        if (newEventDto.getRequestModeration() == null) {
+            eventBuilder.requestModeration(true);
+        }
+    }
+
+    @Mapping(target = "initiator", ignore = true)
+    @Mapping(target = "initiatorId", source = "initiator")
+    EventFullDto toEventFullDto(Event event);
+
+
+    @Mapping(target = "eventDate", expression = "java(parse(dto.getEventDate()))")
+    @Mapping(target = "createdOn", expression = "java(parse(dto.getCreatedOn()))")
+    @Mapping(target = "publishedOn", expression = "java(parse(dto.getPublishedOn()))")
+    @Mapping(target = "state", expression = "java(mapState(dto.getState()))")
+    @Mapping(target = "initiator", expression = "java(dto.getInitiator() != null ? dto.getInitiator().getId() : dto.getInitiatorId())")
+    @Mapping(target = "confirmedRequests", source = "confirmedRequests")
+    @Mapping(target = "views", source = "views")
+    Event toEvent(EventFullDto dto);
+
+    default LocalDateTime parse(String value) {
+        if (value == null) return null;
+        return LocalDateTime.parse(value, DateTimeFormatter.ofPattern(DateFormatter.PATTERN));
+    }
+
+    default EventState mapState(String state) {
+        if (state == null) return null;
+        return EventState.valueOf(state);
+    }
+
+}
