@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package stats.message;
+
+option java_package = "ru.practicum.ewm.stats.proto";
+option java_multiple_files = true;
+
+enum ActionTypeProto {
+
+    VIEW = 0;
+    REGISTER = 1;
+    LIKE = 2;
+
+}
