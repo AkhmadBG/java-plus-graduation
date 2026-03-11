@@ -39,10 +39,17 @@ public class PublicEventController implements PublicEventOperations {
         return eventService.getEventsWithParamsByUser(searchRequest, request);
     }
 
-    @GetMapping("/{id}")
-    public EventFullDto getEvent(@PathVariable Long id,
+//    @GetMapping("/{id}")
+//    public EventFullDto getEvent(@PathVariable Long id,
+//                                 HttpServletRequest request) {
+//        return eventService.getEvent(id, request);
+//    }
+
+    @GetMapping("/{eventId}")
+    public EventFullDto getEvent(@PathVariable Long eventId,
+                                 @RequestHeader("X-EWM-USER-ID") long userId,
                                  HttpServletRequest request) {
-        return eventService.getEvent(id, request);
+        return eventService.getEvent(eventId, userId, request);
     }
 
     @GetMapping("/event/info/{eventId}")

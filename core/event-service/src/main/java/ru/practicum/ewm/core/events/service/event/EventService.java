@@ -20,7 +20,7 @@ public interface EventService {
 
     EventFullDto updateEvent(Long eventId, UpdateEventAdminDto updateEventAdminDto);
 
-    EventFullDto getEvent(Long id, HttpServletRequest request);
+    EventFullDto getEvent(Long eventId, Long userId, HttpServletRequest request);
 
     List<EventFullDto> getEventsWithParamsByAdmin(AdminEventSearchRequest request);
 

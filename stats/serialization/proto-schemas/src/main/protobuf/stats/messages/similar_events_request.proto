@@ -9,6 +9,6 @@ message SimilarEventsRequestProto {
 
   int64 event_id = 1;
   int64 user_id = 2;
-  sint32 max_result = 3;
+  sint32 max_results = 3;
 
 }
