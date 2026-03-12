@@ -1,5 +1,6 @@
 package ru.practicum.ewm.core.events.service.event;
 
+import com.google.protobuf.Timestamp;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -34,8 +35,11 @@ import ru.practicum.ewm.core.interaction.enums.EventState;
 import ru.practicum.ewm.core.interaction.enums.SortValue;
 import ru.practicum.ewm.core.interaction.feignclient.priv.PrivateRequestFeignClient;
 import ru.practicum.ewm.core.interaction.feignclient.pub.PublicCommentFeignClient;
+import ru.practicum.ewm.stats.proto.ActionTypeProto;
 import ru.practicum.ewm.stats.proto.UserActionProto;
 
+//import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,6 +47,7 @@ import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.core.interaction.util.DateFormatter.parse;
 import static ru.practicum.ewm.core.interaction.util.SearchValidators.*;
+import static ru.practicum.ewm.stats.proto.ActionTypeProto.ACTION_VIEW;
 
 
 @Slf4j
@@ -203,8 +208,20 @@ public class EventServiceImpl implements EventService {
 
         UserDto user = adminUserFeignClient.getUser(event.getInitiator());
 
-        UserActionProto userActionProto = new UserActionProto.builder()
+        Instant now = Instant.now();
+        Timestamp timestamp = Timestamp.newBuilder()
+                .setSeconds(now.getEpochSecond())
+                .setNanos(now.getNano())
                 .build();
+
+        UserActionProto userActionProto = UserActionProto.newBuilder()
+                .setEventId(eventId)
+                .setUserId(userId)
+                .setActionType(ActionTypeProto.ACTION_VIEW)
+                .setTimestamp(timestamp)
+                .build();
+
+        collectorClient.collectUserAction(userActionProto);
 
 //        String clientIp = getClientIp(request);
 //        boolean isUnique = isUniqueView(eventId, clientIp);
@@ -310,14 +327,14 @@ public class EventServiceImpl implements EventService {
 //        Map<Long, Long> viewsMap = statisticsService.getEventsViews(eventIds, httpRequest, true);
 //        events.forEach(event -> event.setViews(viewsMap.getOrDefault(event.getId(), 0L)));
 
-        if (shouldSort(request.getSort())) {
-            Comparator<Event> comparator = request.getSort() == SortValue.VIEWS ?
-                    Comparator.comparing(Event::getViews, Comparator.nullsLast(Long::compareTo)).reversed() :
-                    Comparator.comparing(Event::getEventDate, Comparator.nullsLast(LocalDateTime::compareTo));
-            events = events.stream()
-                    .sorted(comparator)
-                    .collect(Collectors.toList());
-        }
+//        if (shouldSort(request.getSort())) {
+//            Comparator<Event> comparator = request.getSort() == SortValue.VIEWS ?
+//                    Comparator.comparing(Event::getViews, Comparator.nullsLast(Long::compareTo)).reversed() :
+//                    Comparator.comparing(Event::getEventDate, Comparator.nullsLast(LocalDateTime::compareTo));
+//            events = events.stream()
+//                    .sorted(comparator)
+//                    .collect(Collectors.toList());
+//        }
 
         Map<Long, Long> eventIdsUserIds = new HashMap<>();
 

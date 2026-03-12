@@ -9,7 +9,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 })
 @SpringBootApplication(scanBasePackages = {
         "ru.practicum.ewm.core.events",
-        "ru.practicum.ewm.core.interaction"
+        "ru.practicum.ewm.core.interaction",
+        "ru.practicum.ewm.client.stats"
 })
 public class EwmEventsServiceApp {
 
