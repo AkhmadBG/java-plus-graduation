@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.client.stats.CollectorClient;
+import ru.practicum.ewm.client.stats.RecommendationsClient;
 import ru.practicum.ewm.core.events.entity.Category;
 import ru.practicum.ewm.core.events.entity.Event;
 import ru.practicum.ewm.core.events.entity.Location;
@@ -35,6 +36,7 @@ import ru.practicum.ewm.core.interaction.enums.EventState;
 import ru.practicum.ewm.core.interaction.feignclient.priv.PrivateRequestFeignClient;
 import ru.practicum.ewm.core.interaction.feignclient.pub.PublicCommentFeignClient;
 import ru.practicum.ewm.stats.proto.ActionTypeProto;
+import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 import ru.practicum.ewm.stats.proto.UserActionProto;
 
 import java.time.Instant;
@@ -56,6 +58,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
     private final CollectorClient collectorClient;
+    private final RecommendationsClient recommendationsClient;
     private final AdminUserFeignClient adminUserFeignClient;
     private final AdminRequestFeignClient adminRequestFeignClient;
     private final PrivateRequestFeignClient privateRequestFeignClient;
@@ -316,9 +319,9 @@ public class EventServiceImpl implements EventService {
             return new ArrayList<>();
         }
 
-        List<Long> eventIds = events.stream()
-                .map(Event::getId)
-                .toList();
+//        List<Long> eventIds = events.stream()
+//                .map(Event::getId)
+//                .toList();
 
 //        Map<Long, Long> viewsMap = statisticsService.getEventsViews(eventIds, httpRequest, true);
 //        events.forEach(event -> event.setViews(viewsMap.getOrDefault(event.getId(), 0L)));
@@ -513,6 +516,63 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new RuntimeException("Event not found"));
         event.setConfirmedRequests(eventFullDto.getConfirmedRequests());
         eventRepository.save(event);
+    }
+
+    @Override
+    public List<EventFullDto> getRecommendationsForUser(Long userId, int maxResults) {
+        List<Long> eventIds = recommendationsClient
+                .getRecommendationsForUser(userId, maxResults)
+                .map(RecommendedEventProto::getEventId)
+                .toList();
+
+        if (eventIds.isEmpty()) {
+            return List.of();
+        }
+
+        return eventRepository.findAllById(eventIds)
+                .stream()
+                .map(eventMapper::toEventFullDto)
+                .toList();
+    }
+
+    @Override
+    public void addEventLike(Long eventId, Long userId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        if (event.getEventDate().isBefore(LocalDateTime.now())) {
+            throw new ValidationException("Event id = " + eventId + " is not over yet");
+        }
+
+        List<ParticipationRequestDto> requestsByEventId = privateRequestFeignClient.getRequestsByEventId(userId, eventId);
+
+        boolean isRequester = false;
+
+        for (ParticipationRequestDto participationRequestDto : requestsByEventId) {
+            if (Objects.equals(participationRequestDto.getRequester(), userId)) {
+                isRequester = true;
+                break;
+            }
+        }
+
+        if (!isRequester) {
+            throw new ValidationException("User id = " + userId + " not attend event id = " + eventId);
+        }
+
+        Instant now = Instant.now();
+        Timestamp timestamp = Timestamp.newBuilder()
+                .setSeconds(now.getEpochSecond())
+                .setNanos(now.getNano())
+                .build();
+
+        UserActionProto userActionProto = UserActionProto.newBuilder()
+                .setEventId(eventId)
+                .setUserId(userId)
+                .setActionType(ActionTypeProto.ACTION_LIKE)
+                .setTimestamp(timestamp)
+                .build();
+
+        collectorClient.collectUserAction(userActionProto);
     }
 
     private void updateEventFieldsFromUserDto(Event event, UpdateEventUserDto dto) {

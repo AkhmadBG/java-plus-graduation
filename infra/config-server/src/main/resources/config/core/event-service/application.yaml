@@ -20,3 +20,16 @@ spring:
     url: jdbc:postgresql://localhost:5427/ewm-core-events
     username: dbuser
     password: 12345
+
+grpc:
+  client:
+    analyzer:
+      address: 'discovery:///analyzer'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+    collector:
+      address: 'discovery:///collector'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext

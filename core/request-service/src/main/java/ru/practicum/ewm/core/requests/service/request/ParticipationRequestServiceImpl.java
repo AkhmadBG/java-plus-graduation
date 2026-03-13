@@ -1,10 +1,12 @@
 package ru.practicum.ewm.core.requests.service.request;
 
+import com.google.protobuf.Timestamp;
 import feign.FeignException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm.client.stats.CollectorClient;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.core.interaction.exceptions.CommentNotExistException;
@@ -19,7 +21,10 @@ import ru.practicum.ewm.core.interaction.feignclient.pub.PublicEventFeignClient;
 import ru.practicum.ewm.core.requests.entity.ParticipationRequest;
 import ru.practicum.ewm.core.requests.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.core.requests.repository.ParticipationRequestRepository;
+import ru.practicum.ewm.stats.proto.ActionTypeProto;
+import ru.practicum.ewm.stats.proto.UserActionProto;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +40,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final AdminUserFeignClient adminUserFeignClient;
     private final ParticipationRequestRepository requestRepository;
     private final ParticipationRequestMapper participationRequestMapper;
+    private final CollectorClient collectorClient;
 
     @Transactional
     public List<ParticipationRequest> getUserRequests(Long userId) {
@@ -94,6 +100,21 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         ParticipationRequest saved = requestRepository.save(request);
         updateEventConfirmedRequests(eventId);
+
+        Instant now = Instant.now();
+        Timestamp timestamp = Timestamp.newBuilder()
+                .setSeconds(now.getEpochSecond())
+                .setNanos(now.getNano())
+                .build();
+
+        UserActionProto userActionProto = UserActionProto.newBuilder()
+                .setEventId(eventId)
+                .setUserId(userId)
+                .setActionType(ActionTypeProto.ACTION_REGISTER)
+                .setTimestamp(timestamp)
+                .build();
+
+        collectorClient.collectUserAction(userActionProto);
 
         return saved;
     }

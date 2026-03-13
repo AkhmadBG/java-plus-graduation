@@ -9,6 +9,7 @@ import ru.practicum.ewm.core.interaction.apiinterface.pub.PublicEventOperations;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.dto.event.PublicEventSearchRequest;
 import ru.practicum.ewm.core.interaction.enums.SortValue;
+import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class PublicEventController implements PublicEventOperations {
 
     @GetMapping("/{eventId}")
     public EventFullDto getEvent(@PathVariable Long eventId,
-                                 @RequestHeader("X-EWM-USER-ID") long userId,
+                                 @RequestHeader("X-EWM-USER-ID") Long userId,
                                  HttpServletRequest request) {
         return eventService.getEvent(eventId, userId, request);
     }
@@ -75,6 +76,17 @@ public class PublicEventController implements PublicEventOperations {
     @PostMapping("/event/save")
     public void saveEvent(@RequestBody EventFullDto eventFullDto) {
         eventService.saveEvent(eventFullDto);
+    }
+
+    @GetMapping("/recommendations")
+    public List<EventFullDto> getRecommendationsForUser(@RequestHeader("X-EWM-USER-ID") Long userId,
+                                                        @RequestParam(defaultValue = "10") int maxResults) {
+        return eventService.getRecommendationsForUser(userId, maxResults);
+    }
+
+    @PutMapping("/{eventId}/like")
+    public void addEventLike(Long eventId, Long userId) {
+        eventService.addEventLike(eventId, userId);
     }
 
 }

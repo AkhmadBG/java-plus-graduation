@@ -5,6 +5,7 @@ import ru.practicum.ewm.core.events.entity.Event;
 import ru.practicum.ewm.core.interaction.dto.event.*;
 import ru.practicum.ewm.core.interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.core.interaction.dto.request.RequestDto;
+import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 
 import java.util.List;
 
@@ -43,5 +44,9 @@ public interface EventService {
     UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, RequestDto updateParticipationRequestDto);
 
     void saveEvent(EventFullDto eventFullDto);
+
+    List<EventFullDto> getRecommendationsForUser(Long userId, int maxResults);
+
+    void addEventLike(Long eventId, Long userId);
 
 }

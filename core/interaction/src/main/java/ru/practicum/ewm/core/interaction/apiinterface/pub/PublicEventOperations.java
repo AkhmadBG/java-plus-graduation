@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.enums.SortValue;
+import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 
 import java.util.List;
 
@@ -22,8 +23,8 @@ public interface PublicEventOperations {
             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
             HttpServletRequest request);
 
-    @GetMapping("/{id}")
-    EventFullDto getEvent(@PathVariable Long id, HttpServletRequest request);
+    @GetMapping("/{eventId}")
+    EventFullDto getEvent(@PathVariable Long eventId, @RequestHeader("X-EWM-USER-ID") Long userId, HttpServletRequest request);
 
     @GetMapping("/event/info/{eventId}")
     EventFullDto getEventFullDto(@PathVariable Long eventId, @RequestParam Long userId);
@@ -39,5 +40,12 @@ public interface PublicEventOperations {
 
     @PostMapping("/event/save")
     void saveEvent(@RequestBody EventFullDto eventFullDto);
+
+    @GetMapping("/recommendations")
+    List<EventFullDto> getRecommendationsForUser(@RequestHeader("X-EWM-USER-ID") Long userId,
+                                                 @RequestParam(defaultValue = "10") int maxResults);
+
+    @PutMapping("/{eventId}/like")
+    void addEventLike(@PathVariable Long eventId, @RequestHeader("X-EWM-USER-ID") Long userId);
 
 }
