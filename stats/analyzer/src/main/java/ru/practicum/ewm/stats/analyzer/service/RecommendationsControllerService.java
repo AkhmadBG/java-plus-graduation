@@ -5,12 +5,14 @@ import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 import ru.practicum.ewm.stats.proto.SimilarEventsRequestProto;
 import ru.practicum.ewm.stats.proto.UserPredictionsRequestProto;
 
+import java.util.stream.Stream;
+
 public interface RecommendationsControllerService {
 
-    RecommendedEventProto getRecommendationsForUser(UserPredictionsRequestProto userPredictionsRequestProto);
+    Stream<RecommendedEventProto> getRecommendationsForUser(UserPredictionsRequestProto userPredictionsRequestProto);
 
-    RecommendedEventProto getSimilarEvents(SimilarEventsRequestProto similarEventsRequestProto);
+    Stream<RecommendedEventProto> getSimilarEvents(SimilarEventsRequestProto similarEventsRequestProto);
 
-    RecommendedEventProto getInteractionsCount(InteractionsCountRequestProto interactionsCountRequestProto);
+    Stream<RecommendedEventProto> getInteractionsCount(InteractionsCountRequestProto interactionsCountRequestProto);
 
 }

@@ -1,6 +1,6 @@
 package ru.practicum.ewm.stats.analyzer.controller;
 
-import com.google.protobuf.Empty;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -11,36 +11,45 @@ import ru.practicum.ewm.stats.proto.*;
 @RequiredArgsConstructor
 public class RecommendationsController extends RecommendationsControllerGrpc.RecommendationsControllerImplBase {
 
-    private final RecommendationsControllerService recommendationsControllerService;
+    private final RecommendationsControllerService service;
 
     @Override
-    public RecommendedEventProto getRecommendationsForUser(UserPredictionsRequestProto userPredictionsRequestProto, StreamObserver<Empty> responseObserver) {
-
-        RecommendedEventProto recommendationsForUser = recommendationsControllerService.getRecommendationsForUser(userPredictionsRequestProto);
-
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
-        return recommendationsForUser;
+    public void getRecommendationsForUser(UserPredictionsRequestProto request, StreamObserver<RecommendedEventProto> responseObserver) {
+        try {
+            service.getRecommendationsForUser(request).forEach(responseObserver::onNext);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
+        }
     }
 
     @Override
-    public RecommendedEventProto getSimilarEvents(SimilarEventsRequestProto similarEventsRequestProto, StreamObserver<Empty> responseObserver) {
-
-        RecommendedEventProto similarEvents = recommendationsControllerService.getSimilarEvents(similarEventsRequestProto);
-
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
-        return similarEvents;
+    public void getSimilarEvents(SimilarEventsRequestProto request, StreamObserver<RecommendedEventProto> responseObserver) {
+        try {
+            service.getSimilarEvents(request).forEach(responseObserver::onNext);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
+        }
     }
 
     @Override
-    public RecommendedEventProto getInteractionsCount(InteractionsCountRequestProto interactionsCountRequestProto, StreamObserver<Empty> responseObserver) {
-
-        RecommendedEventProto interactionsCount = recommendationsControllerService.getInteractionsCount(interactionsCountRequestProto);
-
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
-        return interactionsCount;
+    public void getInteractionsCount(InteractionsCountRequestProto request, StreamObserver<RecommendedEventProto> responseObserver) {
+        try {
+            service.getInteractionsCount(request).forEach(responseObserver::onNext);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
+        }
     }
 
 }

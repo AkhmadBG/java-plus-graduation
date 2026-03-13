@@ -32,13 +32,11 @@ import ru.practicum.ewm.core.interaction.dto.event.*;
 import ru.practicum.ewm.core.interaction.feignclient.adm.AdminRequestFeignClient;
 import ru.practicum.ewm.core.interaction.feignclient.adm.AdminUserFeignClient;
 import ru.practicum.ewm.core.interaction.enums.EventState;
-import ru.practicum.ewm.core.interaction.enums.SortValue;
 import ru.practicum.ewm.core.interaction.feignclient.priv.PrivateRequestFeignClient;
 import ru.practicum.ewm.core.interaction.feignclient.pub.PublicCommentFeignClient;
 import ru.practicum.ewm.stats.proto.ActionTypeProto;
 import ru.practicum.ewm.stats.proto.UserActionProto;
 
-//import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -47,7 +45,6 @@ import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.core.interaction.util.DateFormatter.parse;
 import static ru.practicum.ewm.core.interaction.util.SearchValidators.*;
-import static ru.practicum.ewm.stats.proto.ActionTypeProto.ACTION_VIEW;
 
 
 @Slf4j
@@ -58,7 +55,6 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
-//    private final StatisticsService statisticsService;
     private final CollectorClient collectorClient;
     private final AdminUserFeignClient adminUserFeignClient;
     private final AdminRequestFeignClient adminRequestFeignClient;
@@ -314,7 +310,7 @@ public class EventServiceImpl implements EventService {
             events = events.stream()
                     .filter(event -> event.getParticipantLimit() == 0 ||
                             event.getConfirmedRequests() < event.getParticipantLimit())
-                    .collect(Collectors.toList());
+                    .toList();
         }
         if (events.isEmpty()) {
             return new ArrayList<>();
