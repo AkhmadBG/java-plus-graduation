@@ -25,7 +25,7 @@ public class Interaction {
     private Long eventId;
 
     @Column(name = "rating")
-    private Float rating;
+    private Double rating;
 
     @Column(name = "ts")
     private LocalDateTime created;

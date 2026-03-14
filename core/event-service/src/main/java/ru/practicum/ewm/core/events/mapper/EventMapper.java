@@ -24,7 +24,7 @@ public interface EventMapper {
     @Mapping(target = "createdOn", expression = "java(LocalDateTime.now())")
     @Mapping(target = "state", constant = "PENDING")
     @Mapping(target = "confirmedRequests", constant = "0L")
-    @Mapping(target = "views", constant = "0L")
+//    @Mapping(target = "views", constant = "0L")
     @Mapping(target = "paid", source = "newEventDto.paid", defaultExpression = "java(false)")
     @Mapping(target = "participantLimit", source = "newEventDto.participantLimit", defaultExpression = "java(0)")
     @Mapping(target = "requestModeration", source = "newEventDto.requestModeration", defaultExpression = "java(true)")
@@ -44,7 +44,7 @@ public interface EventMapper {
     @Mapping(target = "initiator", expression = "java(mapToUserShortDto(user))")
     @Mapping(target = "id", source = "event.id")
     @Mapping(target = "confirmedRequests", expression = "java(event.getConfirmedRequests())")
-    @Mapping(target = "views", expression = "java(event.getViews())")
+//    @Mapping(target = "views", expression = "java(event.getViews())")
     @Mapping(target = "paid", expression = "java(event.getPaid())")
     @Mapping(target = "participantLimit", source = "event.participantLimit")
     @Mapping(target = "title", source = "event.title")
@@ -70,7 +70,7 @@ public interface EventMapper {
     @Mapping(target = "initiator", ignore = true)
     @Mapping(target = "id", source = "event.id")
     @Mapping(target = "confirmedRequests", expression = "java(event.getConfirmedRequests())")
-    @Mapping(target = "views", expression = "java(event.getViews())")
+//    @Mapping(target = "views", expression = "java(event.getViews())")
     @Mapping(target = "paid", expression = "java(event.getPaid())")
     @Mapping(target = "title", source = "event.title")
     @Mapping(target = "category", source = "event.category")
@@ -121,7 +121,7 @@ public interface EventMapper {
     @Mapping(target = "state", expression = "java(mapState(dto.getState()))")
     @Mapping(target = "initiator", expression = "java(dto.getInitiator() != null ? dto.getInitiator().getId() : dto.getInitiatorId())")
     @Mapping(target = "confirmedRequests", source = "confirmedRequests")
-    @Mapping(target = "views", source = "views")
+//    @Mapping(target = "views", source = "views")
     Event toEvent(EventFullDto dto);
 
     default LocalDateTime parse(String value) {

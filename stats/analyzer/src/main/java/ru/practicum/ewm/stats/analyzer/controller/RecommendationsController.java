@@ -14,9 +14,10 @@ public class RecommendationsController extends RecommendationsControllerGrpc.Rec
     private final RecommendationsControllerService service;
 
     @Override
-    public void getRecommendationsForUser(UserPredictionsRequestProto request, StreamObserver<RecommendedEventProto> responseObserver) {
+    public void getRecommendationsForUser(UserPredictionsRequestProto userPredictionsRequestProto,
+                                          StreamObserver<RecommendedEventProto> responseObserver) {
         try {
-            service.getRecommendationsForUser(request).forEach(responseObserver::onNext);
+            service.getRecommendationsForUser(userPredictionsRequestProto).forEach(responseObserver::onNext);
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL
@@ -27,9 +28,10 @@ public class RecommendationsController extends RecommendationsControllerGrpc.Rec
     }
 
     @Override
-    public void getSimilarEvents(SimilarEventsRequestProto request, StreamObserver<RecommendedEventProto> responseObserver) {
+    public void getSimilarEvents(SimilarEventsRequestProto similarEventsRequestProto,
+                                 StreamObserver<RecommendedEventProto> responseObserver) {
         try {
-            service.getSimilarEvents(request).forEach(responseObserver::onNext);
+            service.getSimilarEvents(similarEventsRequestProto).forEach(responseObserver::onNext);
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL
@@ -40,9 +42,10 @@ public class RecommendationsController extends RecommendationsControllerGrpc.Rec
     }
 
     @Override
-    public void getInteractionsCount(InteractionsCountRequestProto request, StreamObserver<RecommendedEventProto> responseObserver) {
+    public void getInteractionsCount(InteractionsCountRequestProto interactionsCountRequestProto,
+                                     StreamObserver<RecommendedEventProto> responseObserver) {
         try {
-            service.getInteractionsCount(request).forEach(responseObserver::onNext);
+            service.getInteractionsCount(interactionsCountRequestProto).forEach(responseObserver::onNext);
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL

@@ -25,7 +25,7 @@ public class Similarity {
     private Long event2;
 
     @Column(name = "similarity")
-    private Float similarity;
+    private Double similarity;
 
     @Column(name = "ts")
     private LocalDateTime created;
