@@ -1,6 +1,8 @@
 package ru.practicum.ewm.stats.analyzer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.ewm.stats.analyzer.entity.Interaction;
 import ru.practicum.ewm.stats.analyzer.entity.Similarity;
 import ru.practicum.ewm.stats.analyzer.repository.InteractionRepository;
@@ -11,10 +13,7 @@ import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 import ru.practicum.ewm.stats.proto.SimilarEventsRequestProto;
 import ru.practicum.ewm.stats.proto.UserPredictionsRequestProto;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,9 +29,9 @@ public class RecommendationsControllerServiceImpl implements RecommendationsCont
             UserPredictionsRequestProto request) {
 
         long userId = request.getUserId();
-        int limit = request.getMaxResults();
-
-        List<Interaction> interactions = interactionRepository.findRecentInteractions(userId, limit);
+        Pageable limit = PageRequest.of(0, request.getMaxResults());
+        List<Interaction> interactions = interactionRepository.findByUserIdOrderByCreatedDesc(userId, limit);
+//        List<Interaction> interactions = interactionRepository.findRecentInteractions(userId, limit);
 
         if (interactions.isEmpty()) {
             return Stream.empty();
@@ -47,7 +46,7 @@ public class RecommendationsControllerServiceImpl implements RecommendationsCont
                 .stream()
                 .filter(s -> !viewedEvents.contains(s.getEvent2()))
                 .sorted(Comparator.comparing(Similarity::getSimilarity).reversed())
-                .limit(limit)
+//                .limit(limit)
                 .map(s -> {
                     double score = predictScore(userId, s.getEvent2());
                     return RecommendedEventProto.newBuilder()
@@ -86,12 +85,19 @@ public class RecommendationsControllerServiceImpl implements RecommendationsCont
 
         List<Long> eventIds = request.getEventIdList();
 
-        return interactionRepository
-                .sumRatingsByEventIds(eventIds)
+        Map<Long, Double> sums = interactionRepository
+                .findByEventIdIn(eventIds)
                 .stream()
-                .map(r -> RecommendedEventProto.newBuilder()
-                        .setEventId(r.getEventId())
-                        .setScore(r.getRating())
+                .collect(Collectors.groupingBy(
+                        Interaction::getEventId,
+                        Collectors.summingDouble(Interaction::getRating)
+                ));
+
+        return sums.entrySet()
+                .stream()
+                .map(entry -> RecommendedEventProto.newBuilder()
+                        .setEventId(entry.getKey())
+                        .setScore(entry.getValue())
                         .build());
     }
 
@@ -116,7 +122,7 @@ public class RecommendationsControllerServiceImpl implements RecommendationsCont
             Long eventId = interaction.getEventId();
 
             Optional<Similarity> similarity =
-                    similarityRepository.findSimilarity(eventId, targetEvent);
+                    similarityRepository.findByEvent1AndEvent2(eventId, targetEvent);
 
             if (similarity.isEmpty()) {
                 continue;

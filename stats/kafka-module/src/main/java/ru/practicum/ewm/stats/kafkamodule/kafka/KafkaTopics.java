@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties(prefix = "kafka.topics")
+@ConfigurationProperties(prefix = "kafka.topic")
 public class KafkaTopics {
 
     private String userActions;
