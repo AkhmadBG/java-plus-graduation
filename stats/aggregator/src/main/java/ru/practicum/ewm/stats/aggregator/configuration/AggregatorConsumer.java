@@ -19,6 +19,7 @@ import java.util.List;
 public class AggregatorConsumer {
 
     private final KafkaClient kafkaClient;
+    private final KafkaTopics kafkaTopics;
     private final AggregatorService aggregatorService;
 
     public void start() {
@@ -30,8 +31,8 @@ public class AggregatorConsumer {
         Consumer<String, SpecificRecordBase> consumer = kafkaClient.getConsumer("aggregator");
 
         consumer.subscribe(List.of(
-                KafkaTopics.USER_ACTION_TOPIC,
-                KafkaTopics.EVENT_SIMILARITY_TOPIC
+                kafkaTopics.getUserActions(),
+                kafkaTopics.getEventSimilarity()
         ));
 
         while (true) {

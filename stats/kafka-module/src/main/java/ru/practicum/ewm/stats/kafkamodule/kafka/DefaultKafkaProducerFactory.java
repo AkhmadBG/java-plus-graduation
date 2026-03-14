@@ -18,6 +18,7 @@ public class DefaultKafkaProducerFactory {
     public Producer<String, SpecificRecordBase> createProducer(String module) {
 
         Map<String, String> configMap = properties.getProducers().get(module);
+        Map<String, String> commonProperties = properties.getCommonProperties();
 
         if (configMap == null) {
             throw new IllegalArgumentException("No kafka producer config for module: " + module);
@@ -25,6 +26,7 @@ public class DefaultKafkaProducerFactory {
 
         Properties config = new Properties();
         config.putAll(configMap);
+        config.putAll(commonProperties);
 
         return new KafkaProducer<>(config);
     }

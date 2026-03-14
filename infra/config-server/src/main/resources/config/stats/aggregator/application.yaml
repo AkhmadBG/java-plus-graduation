@@ -6,24 +6,56 @@ grpc:
   server:
     port: 0
 
-aggregator:
-  kafka:
-    common-properties:
-      "bootstrap.servers": localhost:9092
-      "enable.auto.commit": false
-    consumers:
-      - type: UserActionsProcessor
-        properties:
-          "key.deserializer": "org.apache.kafka.common.serialization.LongDeserializer"
-          "value.deserializer": "ru.practicum.kafka.deserializer.UserActionDeserializer"
-          "group.id": "stats.aggregator.user-actions"
-        topics:
-          - "stats.user-actions.v1"
-        poll-timeout: 500ms
-    producers:
-      - type: EventSimilarityProcessor
-        properties:
-          "key.serializer": "org.apache.kafka.common.serialization.LongSerializer"
-          "value.serializer": "ru.practicum.kafka.serializer.UserActionSerializer"
-        topics:
-          - "stats.events-similarity.v1"
+#kafka:
+#  common-properties:
+#    "bootstrap.servers": localhost:9092
+#    "enable.auto.commit": false
+#  consumers:
+#    aggregator:
+#      - type: UserActionsProcessor
+#        properties:
+#          "key.deserializer": "org.apache.kafka.common.serialization.LongDeserializer"
+#          "value.deserializer": "ru.practicum.kafka.deserializer.UserActionDeserializer"
+#          "group.id": "stats.aggregator.user-actions"
+#        poll-timeout: 500ms
+#  producers:
+#    aggregator:
+#      - type: EventSimilarityProcessor
+#        properties:
+#          "key.serializer": "org.apache.kafka.common.serialization.LongSerializer"
+#          "value.serializer": "ru.practicum.kafka.serializer.EventSimilaritySerializer"
+#  topics:
+#    user-actions: stats.user-actions.v1
+#    event-similarity: stats.events-similarity.v1
+#  action-weight:
+#    view: 0.4
+#    registered: 0.8
+#    like: 1.0
+
+kafka:
+
+  common-properties:
+    bootstrap.servers: localhost:9092
+    enable.auto.commit: false
+
+  consumers:
+
+    aggregator:
+      key.deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value.deserializer: ru.practicum.kafka.deserializer.UserActionDeserializer
+      group.id: stats.aggregator.user-actions
+
+  producers:
+
+    aggregator:
+      key.serializer: org.apache.kafka.common.serialization.LongSerializer
+      value.serializer: ru.practicum.kafka.serializer.EventSimilaritySerializer
+
+  topic:
+    user-actions: stats.user-actions.v1
+    event-similarity: stats.events-similarity.v1
+
+  action-weight:
+    view: 0.4
+    registered: 0.8
+    like: 1.0

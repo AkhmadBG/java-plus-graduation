@@ -17,13 +17,14 @@ public class UserActionServiceImpl implements UserActionService {
 
     private final UserActionMapper userActionMapper;
     private final KafkaClient kafkaClient;
+    private final KafkaTopics kafkaTopics;
 
     @Override
     public void userActionHandle(UserActionProto userActionProto) {
         UserActionAvro userActionAvro = userActionMapper.mapToUserActionAvro(userActionProto);
         Producer<String, SpecificRecordBase> producer = kafkaClient.getProducer("collector");
         producer.send(new ProducerRecord<>(
-                KafkaTopics.USER_ACTION_TOPIC,
+                kafkaTopics.getUserActions(),
                 String.valueOf(userActionAvro.getUserId()),
                 userActionAvro
         ));

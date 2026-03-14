@@ -20,6 +20,7 @@ import java.util.List;
 public class AnalyzerConsumer {
 
     private final KafkaClient kafkaClient;
+    private final KafkaTopics kafkaTopics;
     private final AnalyzerService analyzerService;
 
     public void start() {
@@ -29,8 +30,8 @@ public class AnalyzerConsumer {
 
     private void userActionsConsumer() {
 
-        Consumer<String, SpecificRecordBase> consumer = kafkaClient.getConsumer("analyzer");
-        consumer.subscribe(List.of(KafkaTopics.USER_ACTION_TOPIC));
+        Consumer<String, SpecificRecordBase> consumer = kafkaClient.getConsumer("analyzer-user-actions");
+        consumer.subscribe(List.of(kafkaTopics.getUserActions()));
 
         while (true) {
 
@@ -52,8 +53,8 @@ public class AnalyzerConsumer {
 
     private void eventSimilarityConsumer() {
 
-        Consumer<String, SpecificRecordBase> consumer = kafkaClient.getConsumer("analyzer");
-        consumer.subscribe(List.of(KafkaTopics.EVENT_SIMILARITY_TOPIC));
+        Consumer<String, SpecificRecordBase> consumer = kafkaClient.getConsumer("analyzer-similarity");
+        consumer.subscribe(List.of(kafkaTopics.getEventSimilarity()));
 
         while (true) {
 
