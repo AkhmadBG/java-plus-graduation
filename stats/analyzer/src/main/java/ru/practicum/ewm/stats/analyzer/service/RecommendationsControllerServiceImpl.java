@@ -31,7 +31,6 @@ public class RecommendationsControllerServiceImpl implements RecommendationsCont
         long userId = request.getUserId();
         Pageable limit = PageRequest.of(0, request.getMaxResults());
         List<Interaction> interactions = interactionRepository.findByUserIdOrderByCreatedDesc(userId, limit);
-//        List<Interaction> interactions = interactionRepository.findRecentInteractions(userId, limit);
 
         if (interactions.isEmpty()) {
             return Stream.empty();
@@ -46,7 +45,6 @@ public class RecommendationsControllerServiceImpl implements RecommendationsCont
                 .stream()
                 .filter(s -> !viewedEvents.contains(s.getEvent2()))
                 .sorted(Comparator.comparing(Similarity::getSimilarity).reversed())
-//                .limit(limit)
                 .map(s -> {
                     double score = predictScore(userId, s.getEvent2());
                     return RecommendedEventProto.newBuilder()

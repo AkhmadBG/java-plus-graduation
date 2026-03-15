@@ -98,11 +98,6 @@ public class EventServiceImpl implements EventService {
             List<Long> eventIds = eventsPage.getContent().stream()
                     .map(Event::getId)
                     .toList();
-
-//            Map<Long, Long> viewsMap = statisticsService.getEventsViews(eventIds, null, false);
-//            eventsPage.getContent().forEach(event ->
-//                    event.setViews(viewsMap.getOrDefault(event.getId(), 0L))
-//            );
         }
         return eventsPage.getContent().stream()
                 .map(event -> eventMapper.toEventShortDto(event, adminUserFeignClient.getUser(event.getInitiator())))
@@ -148,9 +143,6 @@ public class EventServiceImpl implements EventService {
 
         Event event = eventRepository.findByIdAndInitiator(eventId, userId)
                 .orElseThrow(() -> new EventNotExistException("Event with id=" + eventId + " was not found"));
-
-//        Map<Long, Long> viewsMap = statisticsService.getEventsViews(List.of(eventId), null, false);
-//        event.setViews(viewsMap.getOrDefault(eventId, 0L));
 
         return eventMapper.toEventFullDto(event, adminUserFeignClient.getUser(event.getInitiator()));
     }
@@ -222,24 +214,6 @@ public class EventServiceImpl implements EventService {
 
         collectorClient.collectUserAction(userActionProto);
 
-//        String clientIp = getClientIp(request);
-//        boolean isUnique = isUniqueView(eventId, clientIp);
-
-//        Map<Long, Long> viewsMap = statisticsService.getEventsViews(List.of(eventId), request, true);
-//        Long statsViews = viewsMap.getOrDefault(eventId, 0L);
-//
-//        Long newViews;
-//        if (isUnique) {
-//            newViews = event.getViews() + 1;
-//        } else {
-//            newViews = Math.max(statsViews, event.getViews());
-//        }
-//
-//        if (!newViews.equals(event.getViews())) {
-//            event.setViews(newViews);
-//            event = eventRepository.save(event);
-//        }
-
         return eventMapper.toEventFullDto(event, user);
     }
 
@@ -286,9 +260,6 @@ public class EventServiceImpl implements EventService {
                 .map(Event::getId)
                 .toList();
 
-//        Map<Long, Long> viewsMap = statisticsService.getEventsViews(eventIds, null, false);
-//        events.forEach(event -> event.setViews(viewsMap.getOrDefault(event.getId(), 0L)));
-
         return events.stream()
                 .map(event -> eventMapper.toEventFullDto(event, eventIdsUserDto.get(event.getId())))
                 .collect(Collectors.toList());
@@ -318,22 +289,6 @@ public class EventServiceImpl implements EventService {
         if (events.isEmpty()) {
             return new ArrayList<>();
         }
-
-//        List<Long> eventIds = events.stream()
-//                .map(Event::getId)
-//                .toList();
-
-//        Map<Long, Long> viewsMap = statisticsService.getEventsViews(eventIds, httpRequest, true);
-//        events.forEach(event -> event.setViews(viewsMap.getOrDefault(event.getId(), 0L)));
-
-//        if (shouldSort(request.getSort())) {
-//            Comparator<Event> comparator = request.getSort() == SortValue.VIEWS ?
-//                    Comparator.comparing(Event::getViews, Comparator.nullsLast(Long::compareTo)).reversed() :
-//                    Comparator.comparing(Event::getEventDate, Comparator.nullsLast(LocalDateTime::compareTo));
-//            events = events.stream()
-//                    .sorted(comparator)
-//                    .collect(Collectors.toList());
-//        }
 
         Map<Long, Long> eventIdsUserIds = new HashMap<>();
 
@@ -763,13 +718,5 @@ public class EventServiceImpl implements EventService {
                 .setMaxResults(request.getSize())
                 .getResultList();
     }
-
-//    private boolean isUniqueView(Long eventId, String clientIp) {
-//        return viewCache.computeIfAbsent(clientIp, k -> new HashSet<>()).add(eventId);
-//    }
-//
-//    private String getClientIp(HttpServletRequest request) {
-//        return request.getRemoteAddr();
-//    }
 
 }

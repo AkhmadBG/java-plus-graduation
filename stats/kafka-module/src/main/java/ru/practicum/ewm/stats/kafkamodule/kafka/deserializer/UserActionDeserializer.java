@@ -31,4 +31,5 @@ public class UserActionDeserializer implements Deserializer<UserActionAvro> {
             throw new RuntimeException("Deserialization error", e);
         }
     }
+
 }

@@ -30,10 +30,7 @@ public class AggregatorConsumer {
 
         Consumer<String, SpecificRecordBase> consumer = kafkaClient.getConsumer("aggregator");
 
-        consumer.subscribe(List.of(
-                kafkaTopics.getUserActions(),
-                kafkaTopics.getEventSimilarity()
-        ));
+        consumer.subscribe(List.of(kafkaTopics.getUserActions()));
 
         while (true) {
 

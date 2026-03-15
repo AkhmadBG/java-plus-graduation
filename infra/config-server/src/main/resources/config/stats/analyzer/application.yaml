@@ -1,5 +1,13 @@
 server:
-  port: 0
+  port: 8181
+
+logging:
+  level:
+    root: INFO
+
+grpc:
+  server:
+    port: 6565
 
 spring:
   main:
@@ -20,36 +28,22 @@ spring:
     init:
       mode: always
 
-logging:
-  level:
-    root: INFO
-
-grpc:
-  server:
-    port: 0
-
 kafka:
-
   common-properties:
     bootstrap.servers: localhost:9092
     enable.auto.commit: false
-
   consumers:
-
     analyzer-user-actions:
       key.deserializer: org.apache.kafka.common.serialization.LongDeserializer
       value.deserializer: ru.practicum.ewm.stats.kafkamodule.kafka.deserializer.UserActionDeserializer
       group.id: stats.analyzer.user-actions
-
     analyzer-similarity:
       key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value.deserializer: ru.practicum.ewm.stats.kafkamodule.kafka.deserializer.EventSimilarityDeserializer
       group.id: stats.analyzer.similarities
-
   topic:
     user-actions: stats.user-actions.v1
     event-similarity: stats.events-similarity.v1
-
   action-weight:
     weights:
       view: 0.4

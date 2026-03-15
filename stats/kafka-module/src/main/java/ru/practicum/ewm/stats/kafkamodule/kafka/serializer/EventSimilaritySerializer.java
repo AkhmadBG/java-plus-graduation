@@ -35,4 +35,5 @@ public class EventSimilaritySerializer implements Serializer<EventSimilarityAvro
             throw new RuntimeException("Error serializing EventSimilarityAvro", e);
         }
     }
+
 }

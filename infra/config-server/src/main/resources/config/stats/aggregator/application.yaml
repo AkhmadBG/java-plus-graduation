@@ -10,28 +10,21 @@ grpc:
     port: 0
 
 kafka:
-
   common-properties:
     bootstrap.servers: localhost:9092
     enable.auto.commit: false
-
   consumers:
-
     aggregator:
       key.deserializer: org.apache.kafka.common.serialization.LongDeserializer
       value.deserializer: ru.practicum.ewm.stats.kafkamodule.kafka.deserializer.UserActionDeserializer
       group.id: stats.aggregator.user-actions
-
   producers:
-
     aggregator:
       key.serializer: org.apache.kafka.common.serialization.LongSerializer
       value.serializer: ru.practicum.ewm.stats.kafkamodule.kafka.serializer.EventSimilaritySerializer
-
   topic:
     user-actions: stats.user-actions.v1
     event-similarity: stats.events-similarity.v1
-
   action-weight:
     weights:
       view: 0.4

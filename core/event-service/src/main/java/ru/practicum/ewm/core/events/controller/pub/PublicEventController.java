@@ -9,7 +9,6 @@ import ru.practicum.ewm.core.interaction.apiinterface.pub.PublicEventOperations;
 import ru.practicum.ewm.core.interaction.dto.event.EventFullDto;
 import ru.practicum.ewm.core.interaction.dto.event.PublicEventSearchRequest;
 import ru.practicum.ewm.core.interaction.enums.SortValue;
-import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 
 import java.util.List;
 
@@ -39,12 +38,6 @@ public class PublicEventController implements PublicEventOperations {
 
         return eventService.getEventsWithParamsByUser(searchRequest, request);
     }
-
-//    @GetMapping("/{id}")
-//    public EventFullDto getEvent(@PathVariable Long id,
-//                                 HttpServletRequest request) {
-//        return eventService.getEvent(id, request);
-//    }
 
     @GetMapping("/{eventId}")
     public EventFullDto getEvent(@PathVariable Long eventId,

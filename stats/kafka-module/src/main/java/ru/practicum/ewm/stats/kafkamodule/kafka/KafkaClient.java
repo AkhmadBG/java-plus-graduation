@@ -46,13 +46,15 @@ public class KafkaClient {
         producers.values().forEach(producer -> {
             try {
                 producer.close();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         });
 
         consumers.forEach(consumer -> {
             try {
                 consumer.close();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         });
 
     }

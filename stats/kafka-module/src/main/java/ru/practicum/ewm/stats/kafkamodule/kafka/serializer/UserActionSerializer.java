@@ -8,7 +8,6 @@ import ru.practicum.ewm.stats.avro.UserActionAvro;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-
 import org.apache.avro.specific.SpecificDatumWriter;
 
 public class UserActionSerializer implements Serializer<UserActionAvro> {
@@ -38,4 +37,5 @@ public class UserActionSerializer implements Serializer<UserActionAvro> {
             throw new RuntimeException("Serialization error", e);
         }
     }
+
 }

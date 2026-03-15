@@ -1,6 +1,5 @@
 package ru.practicum.ewm.core.interaction.dto.event;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
