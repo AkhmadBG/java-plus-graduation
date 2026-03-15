@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>avro-schemas</artifactId>
-<!--    <packaging>jar</packaging>-->
 
     <dependencies>
         <dependency>
