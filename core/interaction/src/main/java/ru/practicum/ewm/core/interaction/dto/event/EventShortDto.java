@@ -40,6 +40,6 @@ public class EventShortDto {
     @NotNull
     private String title;
 
-    private Long views;
+    private Double rating;
 
 }

@@ -36,10 +36,16 @@ public class AggregatorServiceImpl implements AggregatorService {
     public void handleUserAction(UserActionAvro userActionAvro) {
         long eventId = userActionAvro.getEventId();
         long userId = userActionAvro.getUserId();
+        String actionType = userActionAvro.getActionType()
+                .name()
+                .replace("ACTION_", "")
+                .toLowerCase();
+        System.out.println(actionType);
+        System.out.println(userActionWeightsProperties);
 //            Получаем вес действия из конфигурации.
         double newWeight = userActionWeightsProperties
                 .getWeights()
-                .get(userActionAvro.getActionType().name().toLowerCase());
+                .get(actionType);
 //            Получаем или создаём карту пользователей для мероприятия
         Map<Long, Double> users =
                 matrixOfUserActionWeights.computeIfAbsent(eventId, e -> new HashMap<>());

@@ -33,6 +33,7 @@ kafka:
     event-similarity: stats.events-similarity.v1
 
   action-weight:
-    view: 0.4
-    registered: 0.8
-    like: 1.0
+    weights:
+      view: 0.4
+      register: 0.8
+      like: 1.0

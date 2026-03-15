@@ -25,7 +25,6 @@ public class UserActionServiceImpl implements UserActionService {
         Producer<String, SpecificRecordBase> producer = kafkaClient.getProducer("collector");
         producer.send(new ProducerRecord<>(
                 kafkaTopics.getUserActions(),
-                String.valueOf(userActionAvro.getUserId()),
                 userActionAvro
         ));
     }
