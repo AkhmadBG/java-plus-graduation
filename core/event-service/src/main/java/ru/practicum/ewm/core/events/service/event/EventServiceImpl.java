@@ -478,9 +478,10 @@ public class EventServiceImpl implements EventService {
         List<Long> eventIds = recommendationsClient
                 .getRecommendationsForUser(userId, maxResults)
                 .map(RecommendedEventProto::getEventId)
-                .toList();
+                .collectList()
+                .block();
 
-        if (eventIds.isEmpty()) {
+        if (eventIds == null || eventIds.isEmpty()) {
             return List.of();
         }
 
