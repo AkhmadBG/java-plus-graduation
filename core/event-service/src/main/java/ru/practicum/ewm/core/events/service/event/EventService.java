@@ -20,7 +20,7 @@ public interface EventService {
 
     EventFullDto updateEvent(Long eventId, UpdateEventAdminDto updateEventAdminDto);
 
-    EventFullDto getEvent(Long id, HttpServletRequest request);
+    EventFullDto getEvent(Long eventId, Long userId, HttpServletRequest request);
 
     List<EventFullDto> getEventsWithParamsByAdmin(AdminEventSearchRequest request);
 
@@ -43,5 +43,9 @@ public interface EventService {
     UpdateParticipationRequestListDto updateUserRequestsByEventId(Long userId, Long eventId, RequestDto updateParticipationRequestDto);
 
     void saveEvent(EventFullDto eventFullDto);
+
+    List<EventFullDto> getRecommendationsForUser(Long userId, int maxResults);
+
+    void addEventLike(Long eventId, Long userId);
 
 }

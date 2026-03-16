@@ -1,0 +1,51 @@
+server:
+  port: 8181
+
+logging:
+  level:
+    root: INFO
+
+grpc:
+  server:
+    port: 6565
+
+spring:
+  main:
+    banner-mode: off
+    log-startup-info: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5424/ewm-stats-analyzer
+    username: dbuser
+    password: 12345
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      show_sql: true
+      format_sql: true
+  sql:
+    init:
+      mode: always
+
+kafka:
+  common-properties:
+    bootstrap.servers: localhost:9092
+    enable.auto.commit: false
+  consumers:
+    analyzer-user-actions:
+      key.deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value.deserializer: ru.practicum.ewm.stats.kafkamodule.kafka.deserializer.UserActionDeserializer
+      group.id: stats.analyzer.user-actions
+    analyzer-similarity:
+      key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value.deserializer: ru.practicum.ewm.stats.kafkamodule.kafka.deserializer.EventSimilarityDeserializer
+      group.id: stats.analyzer.similarities
+  topic:
+    user-actions: stats.user-actions.v1
+    event-similarity: stats.events-similarity.v1
+  action-weight:
+    weights:
+      view: 0.4
+      register: 0.8
+      like: 1.0

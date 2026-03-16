@@ -39,10 +39,11 @@ public class PublicEventController implements PublicEventOperations {
         return eventService.getEventsWithParamsByUser(searchRequest, request);
     }
 
-    @GetMapping("/{id}")
-    public EventFullDto getEvent(@PathVariable Long id,
+    @GetMapping("/{eventId}")
+    public EventFullDto getEvent(@PathVariable Long eventId,
+                                 @RequestHeader("X-EWM-USER-ID") Long userId,
                                  HttpServletRequest request) {
-        return eventService.getEvent(id, request);
+        return eventService.getEvent(eventId, userId, request);
     }
 
     @GetMapping("/event/info/{eventId}")
@@ -68,6 +69,17 @@ public class PublicEventController implements PublicEventOperations {
     @PostMapping("/event/save")
     public void saveEvent(@RequestBody EventFullDto eventFullDto) {
         eventService.saveEvent(eventFullDto);
+    }
+
+    @GetMapping("/recommendations")
+    public List<EventFullDto> getRecommendationsForUser(@RequestHeader("X-EWM-USER-ID") Long userId,
+                                                        @RequestParam(defaultValue = "10") int maxResults) {
+        return eventService.getRecommendationsForUser(userId, maxResults);
+    }
+
+    @PutMapping("/{eventId}/like")
+    public void addEventLike(Long eventId, Long userId) {
+        eventService.addEventLike(eventId, userId);
     }
 
 }

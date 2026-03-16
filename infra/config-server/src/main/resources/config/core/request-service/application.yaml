@@ -20,3 +20,11 @@ spring:
 logging:
   level:
     root: INFO
+
+grpc:
+  client:
+    collector:
+      address: 'discovery:///collector'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
